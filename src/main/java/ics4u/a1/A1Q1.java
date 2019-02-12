@@ -15,7 +15,9 @@ import java.util.Scanner;
 
 public class A1Q1 {
     public static void main(String[] args) {
+        // create scanner for user input
         var scanner = new Scanner(System.in);
+        // do 5 repeats of I/O
         for (var i = 0; i < 5; i++) {
             // get word
             var word = scanner.nextLine();
