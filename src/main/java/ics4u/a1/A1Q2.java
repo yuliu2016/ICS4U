@@ -17,9 +17,9 @@ import java.util.Scanner;
 public class A1Q2 {
     public static void main(String[] args) {
         // create scanner for user input
-        var scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
         // create an array of binary numbers representing braille patterns
-        var patterns = new int[]{
+        int[] patterns = new int[]{
                 0b100000, // A
                 0b101000, // B
                 0b110000, // C
@@ -48,32 +48,32 @@ public class A1Q2 {
                 0b100111  // Z
         };
         // get 15 lines of input before any calculations
-        var lines = new String[15];
-        for (var i = 0; i < 15; i++){
+        String[] lines = new String[15];
+        for (int i = 0; i < 15; i++){
             lines[i] = scanner.nextLine();
         }
         // create a builder of the result
-        var builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         // go through each line
-        for (var i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             // calculate the top-left vertical position
-            var v = i * 3;
+            int v = i * 3;
             // find number of characters
-            var len = lines[v].length() / 2;
+            int len = lines[v].length() / 2;
             // go through each character in the line
-            for (var j = 0; j < len; j++) {
+            for (int j = 0; j < len; j++) {
                 // calculate the top-left horizontal position
-                var h = j * 2;
+                int h = j * 2;
                 // convert characters to 1s and 0s and shift them by their bit number
                 // then adding the result up using the bitwise OR operation
-                var code = xoToInt(lines[v].charAt(h)) << 5
+                int code = xoToInt(lines[v].charAt(h)) << 5
                         | xoToInt(lines[v].charAt(h + 1)) << 4
                         | xoToInt(lines[v + 1].charAt(h)) << 3
                         | xoToInt(lines[v + 1].charAt(h + 1)) << 2
                         | xoToInt(lines[v + 2].charAt(h)) << 1
                         | xoToInt(lines[v + 2].charAt(h + 1));
                 // searches the result code in the patterns array
-                for (var k = 0; k < patterns.length; k++){
+                for (int k = 0; k < patterns.length; k++){
                     if(patterns[k] == code){
                         // convert index to character (`a` starts at 97 in ASCII)
                         // and add to the builder
