@@ -32,8 +32,8 @@ public class A1Q1 {
                 char ch = word.charAt(j - 1);
                 charArray[0][j] = ch;
                 charArray[len - 1][len - j - 1] = ch;
-                charArray[j][0] = ch;
-                charArray[len - j - 1][len - 1] = ch;
+                charArray[len - j - 1][0] = ch;
+                charArray[j][len - 1] = ch;
             }
             // print out array with string builder
             StringBuilder builder = new StringBuilder();
