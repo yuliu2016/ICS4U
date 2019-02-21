@@ -1,14 +1,14 @@
 package ics4u.a1;
 
-import java.util.Scanner;
+import ics4u.io.In;
 
 /**
  * Assignment 1
- *
+ * <p>
  * Problem 2 – Braille
- *
+ * <p>
  * - Convert groups of 3 lines of braille patterns to single-line text
- *
+ * <p>
  * ICS4U class 2019
  *
  * @author Yu Liu
@@ -16,8 +16,6 @@ import java.util.Scanner;
 
 public class A1Q2 {
     public static void main(String[] args) {
-        // create scanner for user input
-        Scanner scanner = new Scanner(System.in);
         // create an array of binary numbers representing braille patterns
         int[] patterns = new int[]{
                 0b100000, // A
@@ -49,8 +47,8 @@ public class A1Q2 {
         };
         // get 15 lines of input before any calculations
         String[] lines = new String[15];
-        for (int i = 0; i < 15; i++){
-            lines[i] = scanner.nextLine();
+        for (int i = 0; i < 15; i++) {
+            lines[i] = In.getString();
         }
         // create a builder of the result
         StringBuilder builder = new StringBuilder();
@@ -73,8 +71,8 @@ public class A1Q2 {
                         | xoToInt(lines[v + 2].charAt(h)) << 1
                         | xoToInt(lines[v + 2].charAt(h + 1));
                 // searches the result code in the patterns array
-                for (int k = 0; k < patterns.length; k++){
-                    if(patterns[k] == code){
+                for (int k = 0; k < patterns.length; k++) {
+                    if (patterns[k] == code) {
                         // convert index to character (`a` starts at 97 in ASCII)
                         // and add to the builder
                         builder.append((char) (k + 97));

@@ -1,26 +1,25 @@
 package ics4u.a1;
 
+import ics4u.io.In;
+
 import java.util.Arrays;
-import java.util.Scanner;
 
 /**
  * Assignment 1
- *
+ * <p>
  * Problem 1 – Word Frame
  * creating a frame around the stars with words
- *
+ * <p>
  * ICS4U class 2019
+ *
  * @author Yu Liu
  */
 
 public class A1Q1 {
     public static void main(String[] args) {
-        // create scanner for user input
-        Scanner scanner = new Scanner(System.in);
-        // do 5 repeats of I/O
-        for (int i = 0; i < 5; i++) {
-            // get word
-            String word = scanner.nextLine();
+        String word;
+        // Run while input is not "exit"
+        while (!(word = In.getString()).equals("exit")) {
             // get array size
             int len = word.length() + 2;
             // create empty array
@@ -28,7 +27,7 @@ public class A1Q1 {
             // fill array
             for (char[] row : charArray) Arrays.fill(row, '*');
             // index through word and add to four sides of the array using length
-            for (int j = 1; j < len - 1; j++){
+            for (int j = 1; j < len - 1; j++) {
                 char ch = word.charAt(j - 1);
                 charArray[0][j] = ch;
                 charArray[len - 1][len - j - 1] = ch;
@@ -37,8 +36,8 @@ public class A1Q1 {
             }
             // print out array with string builder
             StringBuilder builder = new StringBuilder();
-            for (char[] row: charArray){
-                for (char ch: row){
+            for (char[] row : charArray) {
+                for (char ch : row) {
                     builder.append(ch);
                     builder.append(' ');
                 }
