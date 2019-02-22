@@ -60,7 +60,7 @@ public class A1Q2 {
                 50, // 0b110010 - M
                 54, // 0b110110 - N
                 38, // 0b100110 - O
-                42, // 0b101010 - P
+                58, // 0b111010 - P
                 62, // 0b111110 - Q
                 46, // 0b101110 - R
                 26, // 0b011010 - S
@@ -86,11 +86,16 @@ public class A1Q2 {
                         | xoToInt(lines[1][i + 1]) << 2
                         | xoToInt(lines[2][i]) << 1
                         | xoToInt(lines[2][i + 1]);
+                boolean foundCode = false;
                 // searches the result code in the patterns array
                 for (int j = 0; j < patterns.length; j++)
-                    if (patterns[j] == code)
+                    if (patterns[j] == code) {
                         // convert index to character (`a` starts at 97 in ASCII)
                         System.out.print((char) (j + 97));
+                        foundCode = true;
+                        break;
+                    }
+                if (!foundCode) System.out.print(' ');
             }
             // Add a newline
             System.out.println();
