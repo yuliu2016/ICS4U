@@ -14,7 +14,7 @@ import ics4u.io.In;
  * @author Yu Liu
  */
 
-public class A1Q2 {
+public class A1Q2X {
     public static void main(String[] args) {
         // create an array of binary numbers representing braille patterns
         int[] patterns = new int[]{
