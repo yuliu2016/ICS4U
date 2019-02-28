@@ -6,10 +6,22 @@ import java.text.NumberFormat;
 
 /**
  * Assignment 3
- * Question 4
- * Write a program that asks the user for a word.  As the program runs, output an increasing
- * sequence of letters, starting at the first character and ending with the entire word.
- * ICS4U class 2019
+ * Question 9
+ * .  A palindrome is a word that is spelled the same forwards and backwards.
+ * For example, "noon" and "radar" are palindromes, while "hello" and "goodbye" are not.
+ * (a) Write a program to accept a single word as input and determine if it is a
+ * palindrome.  If you have learned about subroutines, create a subroutine called
+ * "isPalindrome" that accepts a single word as a parameter, and returns a boolean (true/false).
+ * (b) A palindrome can always be created by reversing the letters in the original
+ * word and adding those letters to either the beginning or the end.  Write a program,
+ * or subroutine, that will accept a string as input and automatically produce a palindrome
+ * (but make sure you check if it's already a palindrome first).
+ * (c) The method in (b) for creating a palindrome is called a "brute force" method,
+ * which means that it works, but may not be the best solution.  Sometimes you don't
+ * need to add every reversed letter to create the palindrome.  For example, "anagram"
+ * only requires the last 4 letters to be reversed (creating "marganagram".  Write a
+ * program, or subroutine, that will create the palindrome using the fewest extra
+ * characters possible.
  *
  * @author Yu Liu
  */
@@ -19,18 +31,56 @@ public class A3Q09 {
         String s;
         // run while input is positice
         while (!(s = _In.getString()).equals("exit")) {
-            // create a string buffer for the word
-            StringBuffer buffer = new StringBuffer();
-            // loop through the word
-            for (int i = 0; i < s.length(); i++) {
-                // loop through the word with the previous index as the end
-                for (int j = 0; j < i + 1; j++) {
-                    buffer.append(s.charAt(j));
-                }
-                buffer.append("\n");
+            // check if s is a palindrome
+            boolean palindrome = isPalindrome(s);
+            if (palindrome){
+                System.out.println(s + " is a palindrome");
+            } else {
+                System.out.println(s + " is not a palindrome");
+                System.out.println("reversed palindrome: " + reversedPalindrome(s));
+                System.out.println("optimal palindrome: " + optimalPalindrome(s));
             }
-            System.out.print(buffer.toString());
         }
+    }
+
+    /**
+     * (a) Write a program to accept a single word as input and determine if it is a
+     * palindrome.  If you have learned about subroutines, create a subroutine called
+     * "isPalindrome" that accepts a single word as a parameter, and returns a boolean (true/false).
+     */
+    private static boolean isPalindrome(String s) {
+        return s.equals(new StringBuffer(s).reverse().toString());
+    }
+
+    /**
+     * (b) A palindrome can always be created by reversing the letters in the original
+     * word and adding those letters to either the beginning or the end.  Write a program,
+     * or subroutine, that will accept a string as input and automatically produce a palindrome
+     * (but make sure you check if it's already a palindrome first).
+     */
+    private static String reversedPalindrome(String s) {
+        return s + reversed(s.substring(0, s.length() - 1));
+    }
+
+    /**
+     * (c) The method in (b) for creating a palindrome is called a "brute force" method,
+     * which means that it works, but may not be the best solution.  Sometimes you don't
+     * need to add every reversed letter to create the palindrome.  For example, "anagram"
+     * only requires the last 4 letters to be reversed (creating "marganagram".  Write a
+     * program, or subroutine, that will create the palindrome using the fewest extra
+     * characters possible.
+     */
+    private static String optimalPalindrome(String s) {
+        int n = s.length();
+        int i  = 0;
+        int j = n;
+        while (i < j && !isPalindrome(s.substring(i))) i++;
+        while (j > 0 && !isPalindrome(s.substring(0, j))) j--;
+        return n - i >= j ? s + reversed(s.substring(0, i)) : reversed(s.substring(j)) + s;
+    }
+
+    private static String reversed(String s) {
+        return new StringBuffer(s).reverse().toString();
     }
 
     private static class _In {

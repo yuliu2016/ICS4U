@@ -6,10 +6,15 @@ import java.text.NumberFormat;
 
 /**
  * Assignment 3
- * Question 4
- * Write a program that asks the user for a word.  As the program runs, output an increasing
- * sequence of letters, starting at the first character and ending with the entire word.
- * ICS4U class 2019
+ * Question 8
+ * When creating variables, we try to use the camelCase naming convention.
+ * The first word is lowercase, and all following words start with a capital
+ * letter, and there are no spaces between words.  Write a program that asks
+ * the user for one or more words and the creates a camelCase variable name.
+ * For example,
+ * "Welcome to Class" becomes "welcomeToClass"
+ * "THE QUICK BROWN FOX" becomes "theQuickBrownFox"
+ * "HellO HOW aRe you" becomes "helloHowAreYou"
  *
  * @author Yu Liu
  */
@@ -19,18 +24,27 @@ public class A3Q08 {
         String s;
         // run while input is positice
         while (!(s = _In.getString()).equals("exit")) {
+            // split the string
+            String[] strings = s.split(" ");
+            // make string into lowercase
+            for(int i = 0; i < strings.length; i++){
+                strings[i] = strings[i].toLowerCase();
+            }
             // create a string buffer for the word
             StringBuffer buffer = new StringBuffer();
+            // add the first string into the buffer
+            buffer.append(strings[0]);
             // loop through the word
-            for (int i = 0; i < s.length(); i++) {
-                // loop through the word with the previous index as the end
-                for (int j = 0; j < i + 1; j++) {
-                    buffer.append(s.charAt(j));
-                }
-                buffer.append("\n");
+            for (int i = 1; i < strings.length; i++) {
+                // append capitalized word
+                buffer.append(capitalized(strings[i]));
             }
             System.out.print(buffer.toString());
         }
+    }
+
+    private static String capitalized(String s){
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
     private static class _In {

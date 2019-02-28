@@ -6,9 +6,24 @@ import java.text.NumberFormat;
 
 /**
  * Assignment 3
- * Question 4
- * Write a program that asks the user for a word.  As the program runs, output an increasing
- * sequence of letters, starting at the first character and ending with the entire word.
+ * Question 10
+ * Write a program which asks the user for one word at a time. After the user enters their word,
+ * you will concatenate the new word with all previous words. When the user enters the word "quit",
+ * output the final string. The final string should not include the word "quit". You will need a
+ * loop for this program.
+ * Extend: Whenever the user enters a new word, also put a space so the final string looks better.
+ * For example:
+ * User input? hello
+ * Current string: Hello
+ * User input? How
+ * Current string: HelloHow
+ * User input? Are
+ * Current string: HelloHowAre
+ * User input? You?
+ * Current string: HelloHowAreYou?
+ * User input? quit
+ * Program terminated by user.
+ * Final string: HelloHowAreYou?
  * ICS4U class 2019
  *
  * @author Yu Liu
@@ -17,20 +32,15 @@ import java.text.NumberFormat;
 public class A3Q10 {
     public static void main(String[] args) {
         String s;
+        // create a string buffer for the built string
+        StringBuffer buffer = new StringBuffer();
         // run while input is positice
-        while (!(s = _In.getString()).equals("exit")) {
-            // create a string buffer for the word
-            StringBuffer buffer = new StringBuffer();
-            // loop through the word
-            for (int i = 0; i < s.length(); i++) {
-                // loop through the word with the previous index as the end
-                for (int j = 0; j < i + 1; j++) {
-                    buffer.append(s.charAt(j));
-                }
-                buffer.append("\n");
-            }
-            System.out.print(buffer.toString());
+        while (!(s = _In.getString()).equals("quit")) {
+            // add a string to the buffer
+            buffer.append(s);
+            System.out.println("Current String: " + buffer.toString());
         }
+        System.out.println("Final String: " + buffer.toString());
     }
 
     private static class _In {
