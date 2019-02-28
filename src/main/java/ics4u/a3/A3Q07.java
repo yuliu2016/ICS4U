@@ -6,31 +6,31 @@ import java.text.NumberFormat;
 
 /**
  * Assignment 3
- * Question 2
- * Ask the user for one letter at a time. For each letter, "add" the new letter and start building a
- * word. After you add each letter, tell the user the current word they are buildings. Keep going
- * until the user enters a period, and then tell them the final word.
+ * Question 4
+ * Write a program that asks the user for a word.  As the program runs, output an increasing
+ * sequence of letters, starting at the first character and ending with the entire word.
  * ICS4U class 2019
+ *
  * @author Yu Liu
  */
 
-public class A3Q2 {
+public class A3Q07 {
     public static void main(String[] args) {
-        StringBuffer buffer = new StringBuffer();
-        char ch;
-        System.out.print("Letter ? ");
-        // Run while input is not "exit"
-        while ((ch = _In.getChar()) != '.') {
-            if (ch == '\n') continue;
-            // add to buffer
-            buffer.append(ch);
-            // print current word
-            System.out.println("Current Word: " + buffer.toString());
-            // print next prompt
-            System.out.print("Letter ? ");
+        String s;
+        // run while input is positice
+        while (!(s = _In.getString()).equals("exit")) {
+            // create a string buffer for the word
+            StringBuffer buffer = new StringBuffer();
+            // loop through the word
+            for (int i = 0; i < s.length(); i++) {
+                // loop through the word with the previous index as the end
+                for (int j = 0; j < i + 1; j++) {
+                    buffer.append(s.charAt(j));
+                }
+                buffer.append("\n");
+            }
+            System.out.print(buffer.toString());
         }
-        // print final word
-        System.out.println("Final Word: " + buffer.toString());
     }
 
     private static class _In {

@@ -6,7 +6,7 @@ import java.text.NumberFormat;
 
 /**
  * Assignment 3
- * Question 2
+ * Question 3
  * Write a program that asks the user to enter a word and a letter.  Your
  * program should count how many times the letter appears in the word and find
  * the location of the LAST occurrence of that letter.  If the letter is not in
@@ -16,7 +16,7 @@ import java.text.NumberFormat;
  * @author Yu Liu
  */
 
-public class A3Q3 {
+public class A3Q03 {
     public static void main(String[] args) {
         String s;
         char ch;

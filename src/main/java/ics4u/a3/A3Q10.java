@@ -3,36 +3,33 @@ package ics4u.a3;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.NumberFormat;
-import java.util.Arrays;
 
 /**
  * Assignment 3
- * Question 1
- * Write a program that reads a six-digit integer and prints the sum of the six digits.  Use string
- * commands to extract each digit.
- * Modify the program so the user can enter any integer value (i.e., any length at all, not just
- * 6 digits).
+ * Question 4
+ * Write a program that asks the user for a word.  As the program runs, output an increasing
+ * sequence of letters, starting at the first character and ending with the entire word.
  * ICS4U class 2019
  *
  * @author Yu Liu
  */
 
-public class A3Q1 {
+public class A3Q10 {
     public static void main(String[] args) {
-        int n;
+        String s;
         // run while input is positice
-        while ((n = _In.getInt()) > 0) {
-            // convert to string
-            String s = String.valueOf(n);
-            // keep track of sum
-            int sum = 0;
-            // iterate through string
-            for (int i = 0; i < s.length(); i++){
-                // get char and parse it into int
-                sum += Integer.parseInt(String.valueOf(s.charAt(i)));
+        while (!(s = _In.getString()).equals("exit")) {
+            // create a string buffer for the word
+            StringBuffer buffer = new StringBuffer();
+            // loop through the word
+            for (int i = 0; i < s.length(); i++) {
+                // loop through the word with the previous index as the end
+                for (int j = 0; j < i + 1; j++) {
+                    buffer.append(s.charAt(j));
+                }
+                buffer.append("\n");
             }
-            // print out sum
-            System.out.println(sum);
+            System.out.print(buffer.toString());
         }
     }
 
