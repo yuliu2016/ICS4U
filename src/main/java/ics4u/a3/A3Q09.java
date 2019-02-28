@@ -49,6 +49,7 @@ public class A3Q09 {
      * "isPalindrome" that accepts a single word as a parameter, and returns a boolean (true/false).
      */
     private static boolean isPalindrome(String s) {
+        // check if the string is equal to its reverse
         return s.equals(new StringBuffer(s).reverse().toString());
     }
 
@@ -59,6 +60,7 @@ public class A3Q09 {
      * (but make sure you check if it's already a palindrome first).
      */
     private static String reversedPalindrome(String s) {
+        // add a reversed word to reverse the palindrome
         return s + reversed(s.substring(0, s.length() - 1));
     }
 
@@ -69,12 +71,15 @@ public class A3Q09 {
      * only requires the last 4 letters to be reversed (creating "marganagram".  Write a
      * program, or subroutine, that will create the palindrome using the fewest extra
      * characters possible.
+     *
+     * This method finds the largest palindrome at both ends of the word and flips the
+     * word around it
      */
     private static String optimalPalindrome(String s) {
         int n = s.length();
         int i  = 0;
         int j = n;
-        while (i < j && !isPalindrome(s.substring(i))) i++;
+        while (i < n && !isPalindrome(s.substring(i))) i++;
         while (j > 0 && !isPalindrome(s.substring(0, j))) j--;
         return n - i >= j ? s + reversed(s.substring(0, i)) : reversed(s.substring(j)) + s;
     }
