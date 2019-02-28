@@ -6,9 +6,11 @@ import java.text.NumberFormat;
 
 /**
  * Assignment 3
- * Question 4
- * Write a program that asks the user for a word.  As the program runs, output an increasing
- * sequence of letters, starting at the first character and ending with the entire word.
+ * Question 7
+ * (a) Write a program that asks the user to enter a word (string variable) and a letter (string variable).
+ * Find the first location of the letter in the word and save it in a variable (integer).
+ * Output the result for the user.
+ * (b) Find all locations of the letter, and output them for the user.  You will need a loop.
  * ICS4U class 2019
  *
  * @author Yu Liu
@@ -19,17 +21,16 @@ public class A3Q07 {
         String s;
         // run while input is positice
         while (!(s = _In.getString()).equals("exit")) {
-            // create a string buffer for the word
-            StringBuffer buffer = new StringBuffer();
-            // loop through the word
-            for (int i = 0; i < s.length(); i++) {
-                // loop through the word with the previous index as the end
-                for (int j = 0; j < i + 1; j++) {
-                    buffer.append(s.charAt(j));
+            // get the letter to find
+            char ch = _In.getChar();
+            // convert string to char array
+            char[] chars = s.toCharArray();
+            // loop through string and check for equality
+            for (int i = 0; i < chars.length; i++){
+                if (chars[i] == ch){
+                    System.out.println("Found " + ch + " at location " + i);
                 }
-                buffer.append("\n");
             }
-            System.out.print(buffer.toString());
         }
     }
 

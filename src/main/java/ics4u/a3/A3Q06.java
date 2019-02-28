@@ -6,10 +6,13 @@ import java.text.NumberFormat;
 
 /**
  * Assignment 3
- * Question 4
- * Write a program that asks the user for a word.  As the program runs, output an increasing
- * sequence of letters, starting at the first character and ending with the entire word.
- * ICS4U class 2019
+ * Question 6
+ * Write a program that asks the user to enter an integer number (recommend input as a string).
+ * Add each of the digits together ONLY IF the digits are either the same or larger.
+ * If the digits get smaller, subtract the digits.  For example:
+ * input = "123455" would give an output of 20 (1 + 2 + 3 + 4 + 5 + 5)
+ * input = "123115" would give an output of 11 (1 + 2 + 3 - 1 + 1 + 5)
+ * input = "553215" would give an output of 9 (5 + 5 - 3 - 2 - 1 + 5)
  *
  * @author Yu Liu
  */
@@ -19,17 +22,33 @@ public class A3Q06 {
         String s;
         // run while input is positice
         while (!(s = _In.getString()).equals("exit")) {
-            // create a string buffer for the word
-            StringBuffer buffer = new StringBuffer();
-            // loop through the word
-            for (int i = 0; i < s.length(); i++) {
-                // loop through the word with the previous index as the end
-                for (int j = 0; j < i + 1; j++) {
-                    buffer.append(s.charAt(j));
+            // convert to char array
+            char[] chars = s.toCharArray();
+            // create an array to hold digits
+            int[] digits = new int[chars.length];
+            try {
+                for (int i = 0; i < chars.length; i++){
+                    // convert each digit to string
+                    digits[i] = Integer.parseInt(String.valueOf(chars[i]));
                 }
-                buffer.append("\n");
+            } catch (NumberFormatException e){
+                continue;
             }
-            System.out.print(buffer.toString());
+            // keep track of sum and last digit
+            int sum = 0;
+            int lastDigit = 0;
+            for (int i = 0; i < digits.length; i++){
+                // add each of the digits together ONLY IF the digits are either the same or larger.
+                // if the digits get smaller, subtract the digits.
+                int current = digits[i];
+                if (current >= lastDigit){
+                    sum += current;
+                } else {
+                    sum -= current;
+                }
+                lastDigit = current;
+            }
+            System.out.println(sum);
         }
     }
 

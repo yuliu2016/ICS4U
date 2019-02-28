@@ -6,9 +6,9 @@ import java.text.NumberFormat;
 
 /**
  * Assignment 3
- * Question 4
- * Write a program that asks the user for a word.  As the program runs, output an increasing
- * sequence of letters, starting at the first character and ending with the entire word.
+ * Question 5
+ * Write a program that asks the user for a word.  As the program runs, output a decreasing
+ * sequence of letters, starting with the word and ending with the first letter.
  * ICS4U class 2019
  *
  * @author Yu Liu
@@ -21,8 +21,8 @@ public class A3Q05 {
         while (!(s = _In.getString()).equals("exit")) {
             // create a string buffer for the word
             StringBuffer buffer = new StringBuffer();
-            // loop through the word
-            for (int i = 0; i < s.length(); i++) {
+            // loop through the word in reverse
+            for (int i = s.length() - 1; i >= 0; i--) {
                 // loop through the word with the previous index as the end
                 for (int j = 0; j < i + 1; j++) {
                     buffer.append(s.charAt(j));
