@@ -5,25 +5,22 @@ import java.io.InputStreamReader;
 import java.text.NumberFormat;
 
 /**
- * Assignment 3
- * Question 10
- * Write a program which asks the user for one word at a time. After the user enters their word,
- * you will concatenate the new word with all previous words. When the user enters the word "quit",
- * output the final string. The final string should not include the word "quit". You will need a
- * loop for this program.
- * Extend: Whenever the user enters a new word, also put a space so the final string looks better.
- * For example:
- * User input? hello
- * Current string: Hello
- * User input? How
- * Current string: HelloHow
- * User input? Are
- * Current string: HelloHowAre
- * User input? You?
- * Current string: HelloHowAreYou?
- * User input? quit
- * Program terminated by user.
- * Final string: HelloHowAreYou?
+ * Major Assignment 1
+ * Question 9
+ * Write a program that reads names in standard form and prints them in the form
+ * last name, any given initials
+ * The program should prompt the user for names, halting when the user provides the name ZZZ.
+ * As examples, input of
+ * Santa Claus
+ * Michael J. Fox
+ * Madonna
+ * William Henry Richard Charles Windsor
+ * ZZZ
+ * should produce output of
+ * Claus, S.
+ * Fox, M. J.
+ * Madonna
+ * Windsor, W. H. R. C.
  * ICS4U class 2019
  *
  * @author Yu Liu
