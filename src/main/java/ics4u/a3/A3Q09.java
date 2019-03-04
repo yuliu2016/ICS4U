@@ -50,7 +50,7 @@ public class A3Q09 {
      */
     private static boolean isPalindrome(String s) {
         // check if the string is equal to its reverse
-        return s.equals(new StringBuffer(s).reverse().toString());
+        return s.equals(reversed(s));
     }
 
     /**
