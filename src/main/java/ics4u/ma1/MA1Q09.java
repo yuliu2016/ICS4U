@@ -29,15 +29,24 @@ import java.text.NumberFormat;
 public class MA1Q09 {
     public static void main(String[] args) {
         String s;
-        // create a string buffer for the built string
-        StringBuffer buffer = new StringBuffer();
-        // run while input is positice
-        while (!(s = _In.getString()).equals("quit")) {
-            // add a string to the buffer
-            buffer.append(s);
-            System.out.println("Current String: " + buffer.toString());
+        // run while input is not ZZZ
+        while (!(s = _In.getString()).equals("ZZZ")) {
+            // split the name by spaces
+            String[] names = s.split(" ");
+            // first print out the last name
+            System.out.print(names[names.length - 1]);
+            // print out a comma when there are other parts to the name
+            if (names.length > 1) {
+                System.out.print(", ");
+            }
+            // loop through the rest of the name except the last one
+            for (int i = 0; i < names.length - 1; i++){
+                // print out the capitalized first letter of the name and add a dot after it
+                System.out.print(names[i].trim().substring(0, 1).toUpperCase() + ". ");
+            }
+            // add a new line
+            System.out.println();
         }
-        System.out.println("Final String: " + buffer.toString());
     }
 
     private static class _In {
