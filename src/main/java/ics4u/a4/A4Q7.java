@@ -1,7 +1,7 @@
 package ics4u.a4;
 
 /**
- * Assignment 4
+ * Assignment 3
  * Question 5
  *  Assuming that two objects f1 and f2 of type Fraction have been created
  *  and assigned values, write statements to perform each task.
@@ -15,7 +15,7 @@ package ics4u.a4;
  * @author Yu Liu
  */
 
-public class A4Q5 {
+public class A4Q7 {
 
     public static void main(String[] args) {
         Fraction f1 = new Fraction(-1, 2);
