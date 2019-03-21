@@ -1,13 +1,18 @@
 package ics4u.a5;
 
 /**
- * Assignment 4
- * Question 7
- * A complex number z = a+bi can be speciﬁed by its real part, a, and its imaginary part, b.
- * (a) Create a class Complex that could be used to represent complex numbers.
- * (b) Create objects z1 and z2 that represent the complex numbers 2 + 3i and 5−4i.
- * (c) Write a fragment that assigns to z1 the sum of z1 and z2.
- * ICS4U class 2019
+ * Assignment 5
+ * Question 3
+ *  Suppose that a class Complex has been deﬁned as follows:
+ * class Complex { double re; double im; }
+ *
+ * (a) Write an instance method modulus for this class that could be called by a
+ * statement like double size = z.modulus(); where z is of type Complex. If z represented
+ * the value a + ib, then the call would set the variable size to the value of |z| = √a2 + b2.
+ *
+ * (b) Write an instance method called scale for the class Complex that could be called by a
+ * statement like z.scale(x); where z is of type Complex and x is a double value. If, before
+ * the call, z represented the value a + ib, then, after the call, it should represent the value x(a + ib).
  *
  * @author Yu Liu
  */
@@ -15,11 +20,10 @@ package ics4u.a5;
 public class A5Q3 {
 
     public static void main(String[] args) {
-        Complex z1 = new Complex(2, 3);
-        Complex z2 = new Complex(5, 4);
-        System.out.println("Z1: " + z1);
-        System.out.println("Z2: " + z2);
-        System.out.println("Sum: " + z1.add(z2));
+        Complex z1 = new Complex(4, 3);
+        System.out.println("z1: " + z1);
+        System.out.println("z1 modulus: " + z1.modulus());
+        System.out.println("z1 scaled by 5: " + z1.scaled(5));
     }
 
     private static class Complex {
@@ -32,10 +36,17 @@ public class A5Q3 {
         }
 
         /**
-         * Returns the sum of this complex number and other complex number
+         * Find the hypotenuse of the complex number
          */
-        private Complex add(Complex other){
-            return new Complex(real + other.real, imag + other.imag);
+        double modulus() {
+            return Math.sqrt(real * real + imag * imag);
+        }
+
+        /**
+         * Returns this complex number scaled by a scalar value
+         */
+        private Complex scaled(double by){
+            return new Complex(real * by, imag * by);
         }
 
         /**
