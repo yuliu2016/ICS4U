@@ -1,13 +1,14 @@
 package ics4u.a5;
 
 /**
- * Assignment 4
- * Question 7
- * A complex number z = a+bi can be speciﬁed by its real part, a, and its imaginary part, b.
- * (a) Create a class Complex that could be used to represent complex numbers.
- * (b) Create objects z1 and z2 that represent the complex numbers 2 + 3i and 5−4i.
- * (c) Write a fragment that assigns to z1 the sum of z1 and z2.
- * ICS4U class 2019
+ * Assignment 5
+ * Question 4
+ *  Assuming that z1, z2, and z3 are of the type Complex described in the previous question,
+ *
+ *  (a) write an instance method plus that, if called by the statement z1 = z2.plus(z3);
+ *  would set z1 to the sum of z2 and z3,
+ *
+ *  (b) write an instance method times that, if called by the statement z1 = z2.times(z3); would set z1 to the product of z2 and z3.
  *
  * @author Yu Liu
  */
@@ -17,9 +18,12 @@ public class A5Q4 {
     public static void main(String[] args) {
         Complex z1 = new Complex(2, 3);
         Complex z2 = new Complex(5, 4);
+        Complex z3 = new Complex(0.5, 3.7);
         System.out.println("Z1: " + z1);
         System.out.println("Z2: " + z2);
-        System.out.println("Sum: " + z1.add(z2));
+        System.out.println("Z3: " + z3);
+        System.out.println("Z2 + Z3: " + z2.plus(z3));
+        System.out.println("Z2 * Z3: " + z2.times(z3));
     }
 
     private static class Complex {
@@ -34,8 +38,16 @@ public class A5Q4 {
         /**
          * Returns the sum of this complex number and other complex number
          */
-        private Complex add(Complex other){
+        private Complex plus(Complex other){
             return new Complex(real + other.real, imag + other.imag);
+        }
+
+
+        /**
+         * Returns the product of this complex number and other compex number
+         */
+        private Complex times(Complex other) {
+            return new Complex(real * other.real - imag * other.imag, real * other.imag + other.real * imag);
         }
 
         /**
