@@ -29,21 +29,21 @@ public class A5Q2 {
         MutableFraction p = new MutableFraction(-1, 2);
         Fraction q = new Fraction(16, 24);
 
-        System.out.println("p: \t\t\t\t\t\t" + p);
-        System.out.println("q: \t\t\t\t\t\t" + q);
+        System.out.println("p: " + p);
+        System.out.println("q: " + q);
 
         // add q to p and print out the result
         p.plusEquals(q);
-        System.out.println("p.plusEquals(q): \t\t" + p);
+        System.out.println("p.plusEquals(q): " + p);
 
         // add q and p and print out the result
-        System.out.println("p.plus(q): \t\t\t\t" + p.plus(q));
+        System.out.println("p.plus(q): " + p.plus(q));
 
         // reduce q and print out the result
-        System.out.println("q.reduced(): \t\t\t" + q.reduced());
+        System.out.println("q.reduced(): " + q.reduced());
 
         // reduce p + q and print out the result
-        System.out.println("p.plus(q).reduced(): \t" + p.plus(q).reduced());
+        System.out.println("p.plus(q).reduced(): " + p.plus(q).reduced());
     }
 
     /**
