@@ -3,20 +3,17 @@ package ics4u.a5;
 /**
  * Assignment 4
  * Question 6
- * A circle in the Cartesian plane can be described uniquely by its centre and its radius.
- * Thus, a class called Circle that could be used to represent such circles might start with the following:
- * class Circle {
- * double x; // x-coordinate of centre
- * double y; // y-coordinate of centre
- * double r; // radius
- * }
- * An object of this class, representing a circle with centre at (5,2) and having radius 3 is shown in the next diagram.
- * Using this class, write a Java program that performs the following actions.
- * (a) Create Circle objects c1 and c2 where c1 represents a circle with centre at (1,2)
- * having radius 4 while c2 represents a circle with centre at (−2,0) having radius 2.
- * (b) Set the double variable distance to the distance from the origin to the centre of c1 and then print this value.
- * (c) Set the double variable centreSeparationequal to the distance between the centres of c1 and c2 and then print this value.
- * (d) Set the double variable minDistance to the minimum distance from a point on c1 to a point on c2 and then print this value.
+ *  Write a main method that uses the Circle class developed in the previous question.
+ *  The main method should perform the following actions.
+ *
+ * (a) Create two Circle objects c1, representing the circle with centre (4,−1)
+ * and radius 3, and c2, representing the circle with centre (3,−2) and radius 5.
+ *
+ * (b) Find and print the area of c1.
+ *
+ * (c) Determine the smaller of c1 and c2 and then print its centre and radius.
+ *
+ * (d) Determine whether or not c2 lies entirely within c1 and print an appropriate statement.
  * ICS4U class 2019
  *
  * @author Yu Liu
@@ -25,21 +22,18 @@ package ics4u.a5;
 public class A5Q6 {
 
     public static void main(String[] args) {
-        Point2D origin = new Point2D(0, 0);
-        Circle c1 = new Circle(new Point2D(1, 2), 4);
-        Circle c2 = new Circle(new Point2D(-2, 0), 4);
+        Circle c1 = new Circle(new Point2D(4, -1), 3);
+        Circle c2 = new Circle(new Point2D(3, -2), 5);
 
-        // Find distance to origin
-        System.out.println("C1 To Origin Distance: " + origin.distanceTo(c1.point));
-        // Find distance between circles
-        System.out.println("C1 To C2 Distance: " + c2.point.distanceTo(c1.point));
-        // Find min distance between circles
-        double minDist = c2.point.distanceTo(c1.point) - c2.radius - c1.radius;
-        // Check if the two circle overlapses, in which case there must be an intersection point
-        if (minDist < 0) {
-            minDist = 0;
+        System.out.println("Area of c1: " + c1.area());
+
+        System.out.println("The smaller of c1 and c2 is: " + Circle.smaller(c1, c2));
+
+        if (c2.isInside(c1)) {
+            System.out.println("c2 inside c1");
+        } else {
+            System.out.println("c2 not inside c1");
         }
-        System.out.println("Minimum distance between a point on C1 and a point on C2: " + minDist);
     }
 
     private static class Point2D {
@@ -55,6 +49,11 @@ public class A5Q6 {
         private double distanceTo(Point2D other) {
             return Math.sqrt(Math.pow(other.x - x, 2) + Math.pow(other.y - y, 2));
         }
+
+        @Override
+        public String toString() {
+            return "Point(x=" + x + ", y=" + y + ")";
+        }
     }
 
     private static class Circle {
@@ -64,6 +63,37 @@ public class A5Q6 {
         private Circle(Point2D point, double radius) {
             this.point = point;
             this.radius = radius;
+        }
+
+        /**
+         * Returns the area of this circle
+         */
+        double area() {
+            return 2 * Math.PI * radius;
+        }
+
+        /**
+         * Compare the radius of two circles and returns the reference of the biggerone
+         */
+        static Circle smaller(Circle c1, Circle c2) {
+            return c1.radius <= c2.radius ? c1 : c2;
+        }
+
+        /**
+         * Check if this circle is in another circle
+         *
+         * In order for this to be true, the other circle's radius must
+         * strictly be less than this circle's radius, and the distance
+         * between the centers of the two circles must be less than the
+         * difference in radius
+         */
+        boolean isInside(Circle other) {
+            return radius < other.radius && point.distanceTo(other.point) < Math.abs(radius - other.radius);
+        }
+
+        @Override
+        public String toString() {
+            return "Circle(point=" + point +", radius=" + radius + ")";
         }
     }
 }
