@@ -7,20 +7,18 @@ import java.text.NumberFormat;
 /**
  * Major Assignment 1
  * Question 9
- * Write a program that reads names in standard form and prints them in the form
- * last name, any given initials
- * The program should prompt the user for names, halting when the user provides the name ZZZ.
- * As examples, input of
- * Santa Claus
- * Michael J. Fox
- * Madonna
- * William Henry Richard Charles Windsor
- * ZZZ
- * should produce output of
- * Claus, S.
- * Fox, M. J.
- * Madonna
- * Windsor, W. H. R. C.
+ * Write a class Lock that could be used to create electronic lock objects.
+ * Each lock may be in either an open (unlocked) or a closed (locked) state
+ * and each one is protected by its own integer key which must be used to
+ * unlock it. The class should contain the following methods.
+ * • public Lock
+ * (int key) Create a lock that is initially open.
+ * • public void close () Close the lock.
+ * • public boolean isOpen () Return true if and only if the lock is open.
+ * • public void open (int key) Open the lock if and only if the parameter
+ * key matches the lock’s own key. If the lock is closed and the keys do not match,
+ * count the failed attempt. If the same lock receives three or more failed attempts
+ * in a row, print the message "ALARM".
  * ICS4U class 2019
  *
  * @author Yu Liu
@@ -28,24 +26,52 @@ import java.text.NumberFormat;
 
 public class MA2Q7 {
     public static void main(String[] args) {
-        String s;
-        // run while input is not ZZZ
-        while (!(s = _In.getString()).equals("ZZZ")) {
-            // split the name by spaces
-            String[] names = s.split(" ");
-            // first print out the last name
-            System.out.print(names[names.length - 1]);
-            // print out a comma when there are other parts to the name
-            if (names.length > 1) {
-                System.out.print(", ");
+        Lock lock1 = new Lock(111);
+        Lock lock2 = new Lock(222);
+        lock1.close();
+        lock2.close();
+        System.out.println(lock1.isOpen()); // prints false
+        lock1.open(123); // fails to open lock1
+        lock1.open(456); // fails to openlock1
+        lock2.open(222); // opens lock2
+        lock1.open(789); // fails - prints ALARM
+    }
+
+    static class Lock {
+        private int key;
+        private boolean isOpen;
+        private int attempts;
+
+        Lock(int key) {
+            this.key = key;
+            this.isOpen = true;
+        }
+
+        boolean isOpen() {
+            return isOpen;
+        }
+
+        void close() {
+            System.out.println("Lock closed!");
+            isOpen = false;
+        }
+
+        void open(int key) {
+            if (isOpen) {
+                System.out.println("Lock is already opened");
             }
-            // loop through the rest of the name except the last one
-            for (int i = 0; i < names.length - 1; i++){
-                // print out the capitalized first letter of the name and add a dot after it
-                System.out.print(names[i].trim().substring(0, 1).toUpperCase() + ". ");
+            if (key == this.key) {
+                isOpen = true;
+                attempts = 0;
+                System.out.println("Lock opened!");
+            } else {
+                attempts++;
+                if (attempts >= 3) {
+                    System.out.println("ALARM");
+                } else {
+                    System.out.println("Attempt #" + attempts);
+                }
             }
-            // add a new line
-            System.out.println();
         }
     }
 

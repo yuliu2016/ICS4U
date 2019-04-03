@@ -47,7 +47,6 @@ public class A5Q5 {
             return Math.sqrt(Math.pow(other.x - x, 2) + Math.pow(other.y - y, 2));
         }
 
-        @Override
         public String toString() {
             return "Point(x=" + x + ", y=" + y + ")";
         }
@@ -88,7 +87,6 @@ public class A5Q5 {
             return radius < other.radius && point.distanceTo(other.point) < Math.abs(radius - other.radius);
         }
 
-        @Override
         public String toString() {
             return "Circle(point=" + point +", radius=" + radius + ")";
         }

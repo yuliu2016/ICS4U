@@ -55,7 +55,6 @@ public class A6Q4 {
             return a - epsilon <= b &&  a + epsilon >= b;
         }
 
-        @Override
         public String toString() {
             return "Child(height=" + height + ", mass=" + mass + ")";
         }
