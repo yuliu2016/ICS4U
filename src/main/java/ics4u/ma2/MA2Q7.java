@@ -52,19 +52,24 @@ public class MA2Q7 {
         }
 
         void close() {
+            // close the lock
             System.out.println("Lock closed!");
             isOpen = false;
         }
 
         void open(int key) {
+            // check if the lock is already open
             if (isOpen) {
                 System.out.println("Lock is already opened");
             }
+            // check if key is correct
             if (key == this.key) {
+                // open lock and reset attempts
                 isOpen = true;
                 attempts = 0;
                 System.out.println("Lock opened!");
             } else {
+                // increase attempts and print out messages based on it
                 attempts++;
                 if (attempts >= 3) {
                     System.out.println("ALARM");

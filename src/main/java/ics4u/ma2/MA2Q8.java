@@ -68,6 +68,10 @@ public class MA2Q8 {
         private int width;
         private int height;
 
+        /**
+         * Constructor method, which takes in dimensions for the rectange
+         * and limit it to positive values
+         */
         public Rectangle(int left, int bottom, int width, int height) {
             this.left = left;
             this.bottom = bottom;
@@ -80,26 +84,51 @@ public class MA2Q8 {
             if (this.height < 0) this.height = 0;
         }
 
+        /**
+         * Convert to a string representation
+         */
         public String toString() {
             return "base:(" + left + "," + bottom + ") w:" + width + " h:" + height;
         }
 
+        /**
+         * Calculates the area of the rectangle
+         */
         public int area() {
             return width * height;
         }
 
+        /**
+         * Calculates the perimeter of the rectangle
+         */
         public int perimeter() {
             return width * 2 + height * 2;
         }
 
+        /**
+         * Calculates the right position of the rectangle
+         */
         public int right() {
             return left + width;
         }
 
+        /**
+         * Calculates the top position of the rectangle
+         */
         public int top() {
             return bottom + height;
         }
 
+        /**
+         * Get the intersection of two rectangles
+         * <p>
+         * This function first assumes the intersection rectangle at the origin with
+         * dimensions of 0, then for each opposite pair of sides, it checks if they
+         * overlap. If they do, the overlapping part must be part of the intersection
+         * rectangle. In such a case, the overlapping edge must be in a defining edge
+         * of the intersection rectangle and the width must either defined by the other
+         * overlapping edge, or by the width of the other rectangle, whichever is smaller
+         */
         public static Rectangle intersection(Rectangle r1, Rectangle r2) {
             Rectangle result = new Rectangle(0, 0, 0, 0);
             if (r1.left > r2.left && r1.left < r2.right()) {
@@ -119,10 +148,19 @@ public class MA2Q8 {
             return result;
         }
 
+        /**
+         * Gets the total perimeter defined by the two rectangles, which is equivalent
+         * to the total perimeter of the individual rectangles minus the perimeter
+         * of the intersecting rectangle
+         */
         public static int totalPerimeter(Rectangle r1, Rectangle r2) {
             return r1.perimeter() + r2.perimeter() - intersection(r1, r2).perimeter();
         }
 
+        /**
+         * Check if anthor rectangle is entirely contained within this rectangle.
+         * True only it's area is equivalent to the intersecting rectangle's area.
+         */
         public boolean contains(Rectangle other) {
             return intersection(this, other).area() == other.area();
         }
