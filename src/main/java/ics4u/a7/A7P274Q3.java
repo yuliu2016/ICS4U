@@ -5,11 +5,13 @@ import java.io.InputStreamReader;
 import java.text.NumberFormat;
 
 /**
- * Assignment 6
- * Question 5
+ * Assignment 7
+ * Pg 274
+ * Question 3
  * <p>
- * Write a deﬁnition of an equals method for the Fraction class. Your method should
- * return true if and only if the Fraction objects being compared represent equivalent fractions.
+ * Write a program that has a main method that uses the Fraction class to solve the following
+ * problem: prompt the user for three fractions, a, b, and c, compute the value of ab−c2, print
+ * the result, and print the sum of the squares of the numerator and denominator of the result.
  * <p>
  * ICS4U class 2019
  *

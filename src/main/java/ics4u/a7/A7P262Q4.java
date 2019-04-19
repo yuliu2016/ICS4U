@@ -1,7 +1,8 @@
 package ics4u.a7;
 
 /**
- * Assignment 6
+ * Assignment 7
+ * Pg 262
  * Question 4
  *  You have been hired by a wicked witch with a strong interest in children.
  *  The program that she uses to help her maintain records has a class
