@@ -1,11 +1,11 @@
 package ics4u.a7;
 
 /**
- * Assignment 6
- * Question 5
+ * Assignment 7
+ * Question 4
  *
- * Write a deﬁnition of an equals method for the Fraction class. Your method should
- * return true if and only if the Fraction objects being compared represent equivalent fractions.
+ * Write a program that uses the Fraction class to ﬁnd and print, as fractions in lowest terms,
+ * the values of the expression n X i=1 1 2i−1 − 1 2i + 1 for n = 1,2,...,10.
  *
  * ICS4U class 2019
  *
@@ -15,12 +15,12 @@ package ics4u.a7;
 public class A7P274Q4 {
 
     public static void main(String[] args) {
-        Fraction f1 = new Fraction(10, 2);
-        Fraction f2 = new Fraction(15, 3);
-        if (f1.equals(f2)) {
-            System.out.println("F1 equals F2");
-        } else {
-            System.out.println("F1 does not equal F2");
+        // keep track of the sum of fractions
+        Fraction sum = Fraction.additiveIdentity;
+        for (int i = 1; i <= 10; i++) {
+            // do the arithmetic calculation, add it to the sum, then reduce it
+            sum = sum.plus(new Fraction(1, (2 * i - 1)).plus(new Fraction(-1, 2 * i + 1))).reduced();
+            System.out.println("n=" + i + ", Σ=" + sum);
         }
     }
 
@@ -28,6 +28,9 @@ public class A7P274Q4 {
      * Represents a fraction with integer numerators and denominators
      */
     private static class Fraction {
+
+        static Fraction additiveIdentity = new Fraction(0, 1);
+
         int num; // numerator
         int den; // denominator
 
@@ -54,14 +57,10 @@ public class A7P274Q4 {
         }
 
         /**
-         * Check if the Fraction is equal to another in value
+         * Returns the sum of this fraction and another fraction
          */
-        public boolean equals(Object obj) {
-            if (obj instanceof Fraction) {
-                Fraction other = (Fraction) obj;
-                return num/den == other.num/other.den;
-            }
-            return false;
+        Fraction plus(Fraction other) {
+            return new Fraction(num * other.den + other.num * den, den * other.den);
         }
 
         /**
