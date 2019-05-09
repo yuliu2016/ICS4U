@@ -5,8 +5,8 @@ import java.io.InputStreamReader;
 import java.text.NumberFormat;
 
 /**
- * Major Assignment 1
- * Question 10
+ * Major Assignment 2
+ * Question 8
  * Suppose that rectangles in a Cartesian plane are represented by a class
  * Rectangle that has four private ﬁelds as shown:
  * class Rectangle {

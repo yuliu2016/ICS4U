@@ -5,8 +5,8 @@ import java.io.InputStreamReader;
 import java.text.NumberFormat;
 
 /**
- * Major Assignment 1
- * Question 9
+ * Major Assignment 2
+ * Question 7
  * Write a class Lock that could be used to create electronic lock objects.
  * Each lock may be in either an open (unlocked) or a closed (locked) state
  * and each one is protected by its own integer key which must be used to
