@@ -1,5 +1,10 @@
 package ics4u.a9;
 
+/**
+ * Assignment 9
+ *
+ * @author Yu
+ */
 public class Mammal extends Pet {
 
     String hairLength;

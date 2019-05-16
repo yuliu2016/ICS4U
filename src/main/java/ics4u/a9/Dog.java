@@ -1,14 +1,17 @@
 package ics4u.a9;
 
-public class Dog extends Pet {
-	String hairLength;
+/**
+ * Assignment 9
+ *
+ * @author Yu
+ */
+public class Dog extends Mammal {
 	boolean chasesTail;
 	private boolean playsFetch;
 	private boolean excited;
 	
 	public Dog(String colour, String hairLength, boolean chasesTail, boolean playsFetch) {
-		super(colour, 4);
-		this.hairLength = hairLength;
+		super(colour, hairLength);
 		this.chasesTail = chasesTail;
 		this.playsFetch = playsFetch;
 		this.excited = false;

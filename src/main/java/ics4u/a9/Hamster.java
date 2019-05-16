@@ -1,13 +1,16 @@
 package ics4u.a9;
 
-public class Hamster extends Pet {
+/**
+ * Assignment 9
+ *
+ * @author Yu
+ */
+public class Hamster extends Mammal {
 
-    String hairLength;
     private boolean isTired;
 
     public Hamster(String colour, String hairLength) {
-        super(colour, 4);
-        this.hairLength = hairLength;
+        super(colour, hairLength);
     }
 
     /**
