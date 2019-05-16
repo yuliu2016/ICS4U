@@ -1,76 +1,103 @@
 package ics4u.a10;
 
+import java.io.*;
+import java.text.NumberFormat;
+
 /**
- * Assignment 8
- * Question 2
- * (a) For the child development study discussed in this section, write a method
- * that could be added to the Child class that prints the data (name, age, height,
- * and sex) for a child on two lines with the name on the ﬁrst line and the other
- * data on the second line. Print the height in centimetres, rounded to the nearest
- * centimetre.
- * <p>
- * (b) Write a fragment that uses this method to print the data on all the children.
- * <p>
- * (c) Write a method that would produce the same output as the method shown in part
- * (a) if we had chosen to use parallel arrays rather than an array of objects to
- * represent our data.
+ * Assignment 10
+ * Question 3
+ * ICS4U class 2019
  *
  * @author Yu Liu
  */
 
 public class A10Q3 {
-
     public static void main(String[] args) {
-        // test array of objects
-        Child[] children = new Child[]{new Child("Yu", 16, 1.65, 'M')};
-        printAllChildren(children);
+        File file = new File("student_marks.txt");
+        System.out.println("File path: " + file.getAbsolutePath());
+        PrintWriter writer = null;
 
-        // test parallel arrays
-        String[] names = new String[]{"Yu"};
-        int[] ages = new int[]{16};
-        double[] heights = new double[] {1.65};
-        char[] sexes = new char[] {'M'};
-        printAllChildrenParallel(names, ages, heights, sexes);
-    }
-
-    static void printAllChildren(Child[] children) {
-        // loop through and print out each child using class method
-        for (int i = 0; i < children.length; i++) {
-            System.out.println(children[i]);
+        try {
+            writer = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+            // Write CSV headers
+            writer.println("Student's Name,Test1,Mark1,Test2,Mark2,Test3,Mark3,Test4,Mark4");
+            for (int i = 1; i <= 4; i++) {
+                System.out.println("Student #" + i + "---------------");
+                for (int j = 1; j <= 4; j++) {
+                    System.out.print("Test" + j + ": ");
+                    writer.print(_In.getInt());
+                    writer.print(',');
+                    System.out.print("Mark" + j + ": ");
+                    writer.print(_In.getInt());
+                    // do not put a comma at the end
+                    if (j != 4) {
+                        writer.print(',');
+                    }
+                }
+                writer.println();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
         }
     }
 
-    static void printAllChildrenParallel(String[] names, int[] ages, double[] heights, char[] sexes) {
-        // check for bounding error
-        if (ages.length < names.length || heights.length < names.length || sexes.length < names.length) {
-            throw new IllegalArgumentException();
-        }
-        // loop through and print out each child
-        for (int i = 0; i < names.length; i++) {
-            String output = "Name: " + names[i] + "\nAge: " + ages[i] +
-                    "  Height: " + Math.round(heights[i] * 100) + "  Sex: " + sexes[i];
-            System.out.println(output);
-        }
-    }
+    private static class _In {
+        private static InputStreamReader r = new InputStreamReader(System.in);
+        private static BufferedReader br = new BufferedReader(r);
 
-    static class Child {
-        String name; // family, given
-        int age; // in years
-        double height; // in metres
-        char sex; // M or F
-
-        public Child(String name, int age, double height, char sex) {
-            this.name = name;
-            this.age = age;
-            this.height = height;
-            this.sex = sex;
+        // Read a String from standard system input
+        static String getString() {
+            try {
+                return br.readLine();
+            } catch (Exception e) {
+                return "";
+            }
         }
 
-        /**
-         * Returns a string representation in two lines
-         */
-        public String toString() {
-            return "Name: " + name + "\nAge: " + age + "  Height: " + Math.round(height * 100) + "  Sex: " + sex;
+        // Read a Number as a String from standard system input
+        // Return the Number
+        private static Number getNumber() {
+            String numberString = getString();
+            try {
+                numberString = numberString.trim().toUpperCase();
+                return NumberFormat.getInstance().parse(numberString);
+            } catch (Exception e) {
+                // If any exception occurs, just return zero
+                return new Integer(0);
+            }
+        }
+
+        // Read an int from standard system input
+        static int getInt() {
+            return getNumber().intValue();
+        }
+
+        // Read a long from standard system input
+        static long getLong() {
+            return getNumber().longValue();
+        }
+
+        // Read a float from standard system input
+        static float getFloat() {
+            return getNumber().floatValue();
+        }
+
+        // Read a double from standard system input
+        static double getDouble() {
+            return getNumber().doubleValue();
+        }
+
+        // Read a char from standard system input
+        static char getChar() {
+            String s = getString();
+            if (s.length() >= 1)
+                return s.charAt(0);
+            else
+                return '\n';
         }
     }
 }
