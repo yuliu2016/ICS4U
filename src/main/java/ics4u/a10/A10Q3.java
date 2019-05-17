@@ -23,6 +23,10 @@ public class A10Q3 {
             writer.println("Student's Name,Test1,Mark1,Test2,Mark2,Test3,Mark3,Test4,Mark4");
             for (int i = 1; i <= 4; i++) {
                 System.out.println("Student #" + i + "---------------");
+                System.out.print("Name: ");
+                writer.print(_In.getString());
+                writer.print(',');
+                // get input for each test
                 for (int j = 1; j <= 4; j++) {
                     System.out.print("Test" + j + ": ");
                     writer.print(_In.getInt());

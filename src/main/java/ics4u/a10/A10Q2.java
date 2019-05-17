@@ -32,6 +32,7 @@ public class A10Q2 {
             // read line by line
             String line;
             while ((line = br.readLine()) != null) {
+                // split the data and print out the record
                 String[] data = line.split(",");
                 for (int i = 0; i < data.length; i++){
                     _Out.print(data[i], 15);

@@ -35,22 +35,22 @@ public class A10Q1 {
                 writer.print(_In.getString().trim());
                 writer.print(",");
 
-                // get name and write to file
+                // get address and write to file
                 System.out.print("Address: ");
                 writer.print(_In.getString().trim());
                 writer.print(",");
 
-                // get name and write to file
+                // get city and write to file
                 System.out.print("City: ");
                 writer.print(_In.getString().trim());
                 writer.print(",");
 
-                // get name and write to file
+                // get postal code and write to file
                 System.out.print("Postal Code: ");
                 writer.print(_In.getString().trim());
                 writer.print(",");
 
-                // get name and write to file
+                // get phone and write to file
                 System.out.print("Phone Number: ");
                 writer.print(_In.getString().trim());
                 writer.println();
