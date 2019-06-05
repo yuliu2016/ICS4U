@@ -12,11 +12,11 @@ public class BinSearch {
         double[] v = new double[]{0.5, 0.4, 0.3, 0.2, 0.1};
 
         System.out.println("Array: {0.5, 0.4, 0.3, 0.2, 0.1}");
-        System.out.println("Searching 0.34 -- Result: " + binSearch(v, 0.34));
-        System.out.println("Searching 0.27 -- Result: " + binSearch(v, 0.27));
+        System.out.println("Searching 0.34 -- Result: " + binSearchDescendingNearest(v, 0.34));
+        System.out.println("Searching 0.27 -- Result: " + binSearchDescendingNearest(v, 0.27));
     }
 
-    public static int binSearch(double[] list, double item) {
+    public static int binSearchDescendingNearest(double[] list, double item) {
         // lower bound of subarray
         int bottom = 0;
         // upper bound of subarray
