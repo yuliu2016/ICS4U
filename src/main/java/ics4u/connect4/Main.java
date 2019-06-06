@@ -8,7 +8,7 @@ import java.awt.event.WindowEvent;
 
 public class Main {
     public static void main(String[] args) {
-        final Frame app = new Frame("Connect Four Plus");
+        final Frame app = new Frame("Connect Four");
         final GameView view = new GameView();
 
         app.setSize(800, 600);
@@ -20,7 +20,6 @@ public class Main {
         app.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 app.dispose();
-                System.exit(0);
             }
         });
 

@@ -33,8 +33,13 @@ public class Connect4 {
         init(rows, columns, n);
     }
 
-    public Connect4(File file) throws IOException {
-        deserializeFile(file);
+    public Connect4(File file) {
+        assert file != null;
+        try {
+            deserializeFile(file);
+        } catch (IOException e) {
+            init(6, 7, 4);
+        }
     }
 
     public int getState() {
@@ -255,7 +260,6 @@ public class Connect4 {
         int row = 0;
         String line;
         while ((line = br.readLine()) != null && row < rows - 1) {
-            // split the data and print out the record
             String[] data = line.split(",");
             if (data.length != columns) throw new IllegalArgumentException("Data has wrong size");
             board[row] = new int[columns];
