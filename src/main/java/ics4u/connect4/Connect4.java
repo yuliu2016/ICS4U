@@ -215,7 +215,6 @@ public class Connect4 {
         return buffer.toString();
     }
 
-
     String serialize() {
         StringBuffer buffer = new StringBuffer();
         buffer.append(rows);
