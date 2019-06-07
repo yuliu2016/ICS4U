@@ -2,7 +2,7 @@ package ics4u.connect4;
 
 public class Test {
     public static void main(String[] args) {
-        Connect4 connect4 = new Connect4();
+        Connect4 connect4 = new Connect4("RED", "BLUE");
         connect4.move(1);
         connect4.move(1);
         connect4.move(2);
