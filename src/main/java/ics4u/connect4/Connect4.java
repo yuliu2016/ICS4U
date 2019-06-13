@@ -50,6 +50,18 @@ public class Connect4 {
         return Integer.parseInt(br.readLine());
     }
 
+    public int[][] getBoard() {
+        return board;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getColumns() {
+        return columns;
+    }
+
     public String getPlayer() {
         if (player == kFirst) {
             return firstPlayer;
