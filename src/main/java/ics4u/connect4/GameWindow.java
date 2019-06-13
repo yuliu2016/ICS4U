@@ -1,12 +1,13 @@
 package ics4u.connect4;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class GameWindow extends Frame {
+public class GameWindow extends JFrame {
     public static void main(String[] args) {
         new GameWindow();
     }
@@ -41,11 +42,37 @@ public class GameWindow extends Frame {
             }
         });
 
-        setLayout(new BorderLayout());
+        BorderLayout layout = new BorderLayout();
 
-        add(view, "Center");
+        setLayout(layout);
+        add(view, BorderLayout.CENTER);
+//
+//        Panel panel = new Panel();
+//        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+//
+//        panel.add(new Button("hi"));
+//        panel.add(new Button("ho"));
+//
+//        add(panel, BorderLayout.EAST);
+
+
+//
+//        Button button = new Button("Save");
+//        add(view, "East");
+//
+//        add(view, "Center");
+
+
+
 
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    public void update(Graphics g) {
+        Image bufferedImage = createImage(getWidth(), getHeight());
+        Graphics bg = bufferedImage.getGraphics();
+        paint(bg);
+        g.drawImage(bufferedImage, 0, 0, this);
     }
 }
