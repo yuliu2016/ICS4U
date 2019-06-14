@@ -86,6 +86,7 @@ public class GameView extends JComponent {
         checkFonts();
         addMouseListener(mouseListener);
         addMouseMotionListener(mouseMotionListener);
+        invalidateState();
     }
 
     private void checkFonts() {
@@ -100,9 +101,13 @@ public class GameView extends JComponent {
         mainFont = new Font("Arial", Font.PLAIN, 11);
     }
 
-    public void invalidateScaling() {
+    public void invalidateState() {
         lastWidth = 0;
         lastHeight = 0;
+        hoverColumn = -1;
+        jFrame.setTitle("Connect " + connect4.getN() + " | " +
+                connect4.getRows() + "×" + connect4.getColumns() + " | " +
+                connect4.getFirstPlayer() + " vs. " + connect4.getSecondPlayer());
     }
 
     public void paint(Graphics g) {
@@ -124,10 +129,10 @@ public class GameView extends JComponent {
         // Check if the window has resized; if so, recompute coordinates
         if (viewWidth != lastWidth || viewHeight != lastHeight) {
             double minWidth = cols * 12 + 4.0;
-            double maxWidth = 10 * minWidth;
+            double maxWidth = 8 * minWidth;
 
             double minHeight = (rows + 1) * 12 + 4.0;
-            double maxHeight = 10 * minHeight;
+            double maxHeight = 8 * minHeight;
 
             // return if window is too small
             if (viewWidth < minWidth || viewHeight < minHeight) {
@@ -136,8 +141,8 @@ public class GameView extends JComponent {
             }
 
             scale = Math.min(viewHeight / minHeight, viewWidth / minWidth);
-            if (viewWidth > maxWidth) scale = Math.min(scale, 10);
-            if (viewHeight > maxHeight) scale = Math.min(scale, 10);
+            if (viewWidth > maxWidth) scale = Math.min(scale, 8);
+            if (viewHeight > maxHeight) scale = Math.min(scale, 8);
 
             width = scale * minWidth;
             height = scale * minHeight;

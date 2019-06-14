@@ -70,6 +70,14 @@ public class Connect4 {
         return state;
     }
 
+    public String getFirstPlayer() {
+        return firstPlayer;
+    }
+
+    public String getSecondPlayer() {
+        return secondPlayer;
+    }
+
     public String getPlayerName() {
         if (player == kFirst) {
             return firstPlayer;
@@ -138,10 +146,10 @@ public class Connect4 {
         if (state != kPlaying) return;
         int count = 1;
         int c = column;
-        while (c > 0 && c < columns - 1 && board[row][c - 1] == player) c--;
+        while (c > 0 && c < columns && board[row][c - 1] == player) c--;
         count += column - c;
         c = column;
-        while (c > 0 && c < columns - 1 && board[row][c + 1] == player) c++;
+        while (c >= 0 && c < columns - 1 && board[row][c + 1] == player) c++;
         count += c - column;
         if (count >= n) setWin();
     }
@@ -150,10 +158,10 @@ public class Connect4 {
         if (state != kPlaying) return;
         int count = 1;
         int r = row;
-        while (r > 0 && r < rows - 1 && board[r - 1][column] == player) r--;
+        while (r > 0 && r < rows && board[r - 1][column] == player) r--;
         count += row - r;
         r = row;
-        while (r > 0 && r < rows - 1 && board[r + 1][column] == player) r++;
+        while (r >= 0 && r < rows - 1 && board[r + 1][column] == player) r++;
         count += r - row;
         if (count >= n) setWin();
     }
@@ -163,14 +171,14 @@ public class Connect4 {
         int count = 1;
         int r = row;
         int c = column;
-        while (r > 0 && r < rows && c > 0 && c < columns - 1 && board[r - 1][c - 1] == player) {
+        while (r > 0 && r < rows && c > 0 && c < columns && board[r - 1][c - 1] == player) {
             r--;
             c--;
             count++;
         }
         r = row;
         c = column;
-        while (r > 0 && r < rows && c > 0 && c < columns - 1 && board[r + 1][c + 1] == player) {
+        while (r >= 0 && r < rows - 1 && c >= 0 && c < columns - 1 && board[r + 1][c + 1] == player) {
             r++;
             c++;
             count++;
@@ -183,14 +191,14 @@ public class Connect4 {
         int count = 1;
         int r = row;
         int c = column;
-        while (r > 0 && r < rows && c > 0 && c < columns - 1 && board[r + 1][c - 1] == player) {
+        while (r >= 0 && r < rows - 1 && c > 0 && c < columns && board[r + 1][c - 1] == player) {
             r++;
             c--;
             count++;
         }
         r = row;
         c = column;
-        while (r > 0 && r < rows && c > 0 && c < columns - 1 && board[r - 1][c + 1] == player) {
+        while (r > 0 && r < rows && c >= 0 && c < columns - 1 && board[r - 1][c + 1] == player) {
             r--;
             c++;
             count++;

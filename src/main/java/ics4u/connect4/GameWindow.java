@@ -82,7 +82,7 @@ public class GameWindow extends JFrame {
         addRow_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 connect4.init(connect4.getRows() + 1, connect4.getColumns(), connect4.getN());
-                view.invalidateScaling();
+                view.invalidateState();
                 view.repaint();
             }
         });
@@ -93,18 +93,30 @@ public class GameWindow extends JFrame {
         addCol_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 connect4.init(connect4.getRows(), connect4.getColumns() + 1, connect4.getN());
-                view.invalidateScaling();
+                view.invalidateState();
                 view.repaint();
             }
         });
         game_.add(addCol_);
 
+        JMenuItem addN_ = new JMenuItem("Add N");
+        addN_.setAccelerator(KeyStroke.getKeyStroke('N', shortcut));
+        addN_.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                connect4.init(connect4.getRows(), connect4.getColumns(), connect4.getN() + 1);
+                view.invalidateState();
+                view.repaint();
+            }
+        });
+        game_.add(addN_);
+
+
         JMenuItem resetAll_ = new JMenuItem("Reset All");
-        resetAll_.setAccelerator(KeyStroke.getKeyStroke('U', shortcut));
+        resetAll_.setAccelerator(KeyStroke.getKeyStroke('0', shortcut));
         resetAll_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 connect4.init(6, 7, 4);
-                view.invalidateScaling();
+                view.invalidateState();
                 view.repaint();
             }
         });
