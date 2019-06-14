@@ -3,13 +3,17 @@ package ics4u.connect4;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @noinspection FieldCanBeLocal
  */
 public class GameWindow extends JFrame {
+
     private Connect4 connect4;
     private GameView view;
+
     GameWindow() {
         super("Connect 4");
         connect4 = new Connect4("Player 1", "Player 2");
@@ -39,7 +43,7 @@ public class GameWindow extends JFrame {
 
         BorderLayout layout = new BorderLayout();
 
-        Container container = getContentPane();
+        final Container container = getContentPane();
 
         container.setLayout(layout);
         container.add(view, BorderLayout.CENTER);
@@ -48,24 +52,72 @@ public class GameWindow extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         int shortcut = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
-        JMenu file_ = new JMenu("File");
-        JMenuItem save_ = new JMenuItem("Save");
-//        save.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                saveGame();
-//            }
-//        });
-        file_.add(save_);
-        JMenuItem load_ = new JMenuItem("Load");
-//        load.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                loadGame();
-//            }
-//        });
-        file_.add(load_);
-        menuBar.add(file_);
+        JMenu game_ = new JMenu("Menu");
 
-        JMenu game_ = new JMenu("Game");
+        JMenuItem setPlayer1_ = new JMenuItem("Set Red Player");
+        setPlayer1_.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String s = JOptionPane.showInputDialog("Set Red Player", connect4.getFirstPlayer());
+                if (s.length() > 0 && !s.equals(connect4.getFirstPlayer())) {
+                    connect4.setFirstPlayer(s);
+                    view.invalidateState();
+                    view.repaint();
+                }
+            }
+        });
+        game_.add(setPlayer1_);
+
+        JMenuItem setPlayer2_ = new JMenuItem("Set Yellow Player");
+        setPlayer2_.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String s = JOptionPane.showInputDialog("Set Yellow Player", connect4.getSecondPlayer());
+                if (s.length() > 0 && !s.equals(connect4.getSecondPlayer())) {
+                    connect4.setSecondPlayer(s);
+                    view.invalidateState();
+                    view.repaint();
+                }
+            }
+        });
+        game_.add(setPlayer2_);
+
+        JMenuItem save_ = new JMenuItem("Save");
+        save_.setAccelerator(KeyStroke.getKeyStroke('S', shortcut));
+        save_.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                FileDialog fileDialog = new FileDialog(GameWindow.this, "Save", FileDialog.SAVE);
+                fileDialog.setFile("*.txt");
+                fileDialog.setVisible(true);
+                String filename = fileDialog.getFile();
+                String dir = fileDialog.getDirectory();
+                if (filename != null && dir != null) {
+                    try {
+                        connect4.save(new File(dir, filename));
+                    } catch (IOException ignored) {
+                    }
+                    view.invalidateState();
+                    view.repaint();
+                }
+            }
+        });
+        game_.add(save_);
+
+        JMenuItem load_ = new JMenuItem("Load");
+        load_.setAccelerator(KeyStroke.getKeyStroke('O', shortcut));
+        load_.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                FileDialog fileDialog = new FileDialog(GameWindow.this, "Save", FileDialog.LOAD);
+                fileDialog.setFile("*.txt");
+                fileDialog.setVisible(true);
+                String filename = fileDialog.getFile();
+                String dir = fileDialog.getDirectory();
+                if (filename != null && dir != null) {
+                    connect4.load(new File(dir, filename));
+                    view.invalidateState();
+                    view.repaint();
+                }
+            }
+        });
+        game_.add(load_);
 
         JMenuItem restart_ = new JMenuItem("Restart");
         restart_.setAccelerator(KeyStroke.getKeyStroke('R', shortcut));

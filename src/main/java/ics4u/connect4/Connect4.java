@@ -33,19 +33,6 @@ public class Connect4 {
         init(6, 7, 4);
     }
 
-    public Connect4(File file) {
-        if (file == null) {
-            throw new NullPointerException("No file specified for connect four");
-        }
-        try {
-            deserializeFile(file);
-        } catch (IOException e) {
-            this.firstPlayer = "RED";
-            this.secondPlayer = "BLUE";
-            init(6, 7, 4);
-        }
-    }
-
     static int readInt(BufferedReader br) throws IOException {
         return Integer.parseInt(br.readLine());
     }
@@ -74,8 +61,16 @@ public class Connect4 {
         return firstPlayer;
     }
 
+    public void setFirstPlayer(String firstPlayer) {
+        this.firstPlayer = firstPlayer;
+    }
+
     public String getSecondPlayer() {
         return secondPlayer;
+    }
+
+    public void setSecondPlayer(String secondPlayer) {
+        this.secondPlayer = secondPlayer;
     }
 
     public String getPlayerName() {
@@ -142,8 +137,7 @@ public class Connect4 {
         setDraw();
     }
 
-    private void checkHorizontal(int row, int column) {
-        if (state != kPlaying) return;
+    private boolean checkHorizontal(int row, int column, int[][] board, int player) {
         int count = 1;
         int c = column;
         while (c > 0 && c < columns && board[row][c - 1] == player) c--;
@@ -151,11 +145,10 @@ public class Connect4 {
         c = column;
         while (c >= 0 && c < columns - 1 && board[row][c + 1] == player) c++;
         count += c - column;
-        if (count >= n) setWin();
+        return count >= n;
     }
 
-    private void checkVertical(int row, int column) {
-        if (state != kPlaying) return;
+    private boolean checkVertical(int row, int column, int[][] board, int player) {
         int count = 1;
         int r = row;
         while (r > 0 && r < rows && board[r - 1][column] == player) r--;
@@ -163,11 +156,10 @@ public class Connect4 {
         r = row;
         while (r >= 0 && r < rows - 1 && board[r + 1][column] == player) r++;
         count += r - row;
-        if (count >= n) setWin();
+        return count >= n;
     }
 
-    private void checkDiagonal(int row, int column) {
-        if (state != kPlaying) return;
+    private boolean checkDiagonal(int row, int column, int[][] board, int player) {
         int count = 1;
         int r = row;
         int c = column;
@@ -183,11 +175,10 @@ public class Connect4 {
             c++;
             count++;
         }
-        if (count >= n) setWin();
+        return count >= n;
     }
 
-    private void checkInverseDiagonal(int row, int column) {
-        if (state != kPlaying) return;
+    private boolean checkInverseDiagonal(int row, int column, int[][] board, int player) {
         int count = 1;
         int r = row;
         int c = column;
@@ -203,7 +194,7 @@ public class Connect4 {
             c++;
             count++;
         }
-        if (count >= n) setWin();
+        return count >= n;
     }
 
     void move(int column) {
@@ -214,10 +205,13 @@ public class Connect4 {
         while (row > 0 && board[row - 1][column] == kEmpty) row--;
         board[row][column] = player;
 
-        checkHorizontal(row, column);
-        checkVertical(row, column);
-        checkDiagonal(row, column);
-        checkInverseDiagonal(row, column);
+        if (checkHorizontal(row, column, board, player) ||
+                checkVertical(row, column, board, player) ||
+                checkDiagonal(row, column, board, player) ||
+                checkInverseDiagonal(row, column, board, player)) {
+            setWin();
+        }
+
         checkBoardFilled();
 
         if (state == kPlaying) {
@@ -233,7 +227,7 @@ public class Connect4 {
 
     public String toString() {
         StringBuffer buffer = new StringBuffer("Current Board: \n");
-        for (int i = 1; i <= columns; i++){
+        for (int i = 1; i <= columns; i++) {
             buffer.append(i);
             buffer.append(' ');
         }
@@ -269,7 +263,7 @@ public class Connect4 {
         return buffer.toString();
     }
 
-    String serialize() {
+    private String serialize() {
         StringBuffer buffer = new StringBuffer();
         buffer
                 .append(firstPlayer).append('\n')
@@ -292,14 +286,24 @@ public class Connect4 {
         return buffer.toString();
     }
 
-    void serializeToFile(File file) throws IOException {
+    public void save(File file) throws IOException {
         String s = serialize();
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file)));
         writer.print(s);
         writer.close();
     }
 
-    void deserializeFile(File file) throws IOException {
+    public void load(File file) {
+        try {
+            deserializeFile(file);
+        } catch (IOException e) {
+            this.firstPlayer = "RED";
+            this.secondPlayer = "BLUE";
+            init(6, 7, 4);
+        }
+    }
+
+    private void deserializeFile(File file) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file));
         firstPlayer = br.readLine();
         firstScore = readInt(br);
@@ -314,16 +318,16 @@ public class Connect4 {
         state = readInt(br);
         int row = 0;
         String line;
-        while ((line = br.readLine()) != null && row < rows - 1) {
+        while ((line = br.readLine()) != null && row < rows) {
             String[] data = line.split(",");
             if (data.length != columns) throw new IllegalArgumentException("Data has wrong size");
             board[row] = new int[columns];
             for (int column = 0; column < columns; column++) {
                 board[row][column] = Integer.parseInt(data[column]);
             }
-            System.out.println();
+            row++;
         }
-        if (row != rows - 1) throw new IllegalArgumentException("Data has wrong size");
+        if (row != rows) throw new IllegalArgumentException("Data has wrong size");
         br.close();
     }
 }
