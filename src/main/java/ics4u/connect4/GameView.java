@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class GameView extends JComponent {
 
-    // Setup colours
+    // Colour constants
 
     private static Color darkCyan = new Color(0, 125, 125);
     private static Color lightGray = new Color(224, 224, 224);
@@ -100,19 +100,23 @@ public class GameView extends JComponent {
             public void mouseMoved(MouseEvent e) {
                 // Find the column where the mouse is; -1 by default
                 int newCol = -1;
+
                 // Check if the current state allows for hovering
                 if (scale != 0.0 && connect4.getState() == Connect4.kPlaying) {
                     int mouseX = e.getX();
                     int cols = connect4.getColumns();
+
                     // Calculate the min and max of the mouse range using columns
                     double min = x + 2 * scale;
                     double max = min + cols * 12 * scale;
+
                     // Check if mouse in range
                     if (mouseX >= min && mouseX <= max) {
                         // Interpolate to get the column number
                         newCol = (int) ((mouseX - min) / (12 * scale));
                     }
                 }
+
                 // Repaint only if the new column is not the current hoverColumn
                 if (newCol != hoverColumn) {
                     hoverColumn = newCol;
@@ -128,6 +132,7 @@ public class GameView extends JComponent {
                 if (hoverColumn == -1 || connect4.getState() != Connect4.kPlaying) {
                     return;
                 }
+
                 // Check that the move is valid before making the move
                 if (connect4.isValidMove(hoverColumn)) {
                     connect4.move(hoverColumn);
@@ -153,6 +158,7 @@ public class GameView extends JComponent {
     // Creates the menu bar, with menu items and shortcuts
     private JMenuBar getMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+
         // Get the shortcut key from the toolkit
         int shortcut = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
@@ -198,6 +204,7 @@ public class GameView extends JComponent {
                 fileDialog.setVisible(true);
                 String filename = fileDialog.getFile();
                 String dir = fileDialog.getDirectory();
+
                 // Check that file is seleted
                 if (filename != null && dir != null) {
                     // Try saving to the file
@@ -220,6 +227,7 @@ public class GameView extends JComponent {
                 fileDialog.setVisible(true);
                 String filename = fileDialog.getFile();
                 String dir = fileDialog.getDirectory();
+
                 // Check that file is seleted
                 if (filename != null && dir != null) {
                     // Try loading it into the file
@@ -295,24 +303,36 @@ public class GameView extends JComponent {
         return menuBar;
     }
 
+    // Invalidates computed state of the view
     public void invalidateState() {
+        // Reset the width and height so it will be picked up on paint
         lastWidth = 0;
         lastHeight = 0;
         hoverColumn = -1;
+
+        // Reset the title of the window
         frame.setTitle("Connect " + connect4.getN() + " | " +
                 connect4.getRows() + " by " + connect4.getColumns() + " | " +
                 connect4.getFirstPlayer() + " vs. " + connect4.getSecondPlayer());
     }
 
+    // Paints the screen
     public void paint(Graphics g) {
+
+        // Get a casted Graphics2D
         Graphics2D g2 = (Graphics2D) g;
 
         // Set rendering parameters
         g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        // Get view dimensions
+
         int viewWidth = getWidth();
         int viewHeight = getHeight();
+
+        // Clear the background
 
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, viewWidth, viewHeight);
@@ -322,27 +342,40 @@ public class GameView extends JComponent {
 
         // Check if the window has resized; if so, recompute coordinates
         if (viewWidth != lastWidth || viewHeight != lastHeight) {
+
+            // Find the min and max of viewport dimensions
+
             double minWidth = cols * 12 + 4.0;
             double maxWidth = 8 * minWidth;
 
             double minHeight = (rows + 1) * 12 + 4.0;
             double maxHeight = 8 * minHeight;
 
-            // return if window is too small
+            // return if window is too small to draw properly
             if (viewWidth < minWidth || viewHeight < minHeight) {
                 scale = 0.0;
                 return;
             }
 
+            // Compute the based on the view dimensions
             scale = Math.min(viewHeight / minHeight, viewWidth / minWidth);
+
+            // Limit scale if view dimensions exceed the max dimensions
+
             if (viewWidth > maxWidth) scale = Math.min(scale, 8);
             if (viewHeight > maxHeight) scale = Math.min(scale, 8);
+
+            // Compute viewport dimensions using scale
 
             width = scale * minWidth;
             height = scale * minHeight;
 
+            // Find the offset translation so that the viewport is centered
+
             x = (viewWidth - width) / 2.0;
             y = (viewHeight - height) / 2.0;
+
+            // Derive the font size according to the scale
 
             mainFont = mainFont.deriveFont((float) (int) (scale * 5));
 
@@ -350,16 +383,15 @@ public class GameView extends JComponent {
             lastHeight = viewHeight;
         }
 
+        // Draw the gray background
 
         RoundRectangle2D bg1 = new RoundRectangle2D.Double();
-        bg1.setRoundRect(x, y, width, height,
-                scale * 4, scale * 4);
+        bg1.setRoundRect(x, y, width, height, scale * 4, scale * 4);
 
         g.setColor(lightGray);
         g2.fill(bg1);
 
-        g.setColor(Color.BLACK);
-        g.setFont(mainFont);
+        // Create the message
 
         String message;
         int state = connect4.getState();
@@ -367,40 +399,66 @@ public class GameView extends JComponent {
         else if (state == Connect4.kWin) message = connect4.getPlayerName() + " won the game!!!";
         else message = "The game is a tie";
 
+        // Use measured bounds to center the message
+
+        g.setColor(Color.BLACK);
+        g.setFont(mainFont);
+
         Rectangle2D bounds = mainFont.getStringBounds(message, g2.getFontRenderContext());
         g.drawString(message, (int) (x + width / 2 - bounds.getWidth() / 2.0),
                 (int) (y + scale * 6 + bounds.getHeight() / 2.0));
 
+        // Draw the dark cyan background for the board, offsetting all sides by 1 * scale
+
         RoundRectangle2D bg2 = new RoundRectangle2D.Double();
-        bg2.setRoundRect(x + scale, y + scale * 13, scale * (cols * 12 + 2), scale * (rows * 12 + 2),
+        bg2.setRoundRect(x + scale, y + scale * (12 + 1),
+                scale * (cols * 12 + 2), scale * (rows * 12 + 2),
                 scale * 4, scale * 4);
 
         g.setColor(darkCyan);
         g2.fill(bg2);
+
+        // Draw all the checker pieces
 
         int[][] board = connect4.getBoard();
 
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
                 Ellipse2D ellipse = new Ellipse2D.Double();
+
+                // Compute the absolute position of the piece
                 ellipse.setFrame(x + scale * (12 * i + 3), y + scale * (12 * j + 12 + 3),
                         scale * 10, scale * 10);
+
                 int piece = board[rows - 1 - j][i];
+
+                // Resolve the color of the piece
                 g.setColor(piece == Connect4.kEmpty ? Color.WHITE : (piece == Connect4.kFirst ? darkRed : darkYellow));
                 g2.fill(ellipse);
             }
         }
 
+        // Draw an indicater if a column is being hovered
+
         if (hoverColumn != -1) {
             int row = rows - 1;
             if (board[row][hoverColumn] == 0) {
-                while (row > 0 && board[row - 1][hoverColumn] == 0) row--;
+                while (row > 0 && board[row - 1][hoverColumn] == 0) {
+                    row--;
+                }
+
                 int player = connect4.getPlayer();
+
+                // Resolve the color of the piece
                 g.setColor(player == Connect4.kFirst ? darkRed :
                         (player == Connect4.kSecond ? darkYellow : Color.BLUE));
+
                 Ellipse2D hovierIndicator = new Ellipse2D.Double();
+
+                // Compute the absolute position of the indicater
                 hovierIndicator.setFrame(x + scale * (12 * hoverColumn + 3 + 3.5),
                         y + scale * (12 * (rows - 1 - row) + 12 + 3 + 3.5), scale * 3, scale * 3);
+
                 g2.fill(hovierIndicator);
             }
         }
