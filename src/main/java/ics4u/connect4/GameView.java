@@ -6,22 +6,30 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
- * The GameView provides a graphical user interface for the Conncect4 class
+ * The Connect 4 (N) Game, with a graphical user interface
  *
  * @author Yu Liu
  */
 public class GameView extends JComponent {
 
     // Colour constants
-
     private static Color darkCyan = new Color(0, 125, 125);
     private static Color lightGray = new Color(224, 224, 224);
     private static Color darkYellow = new Color(224, 224, 0);
     private static Color darkRed = new Color(224, 0, 0);
+
+    // Player constants
+    private static final int kEmpty = 0;
+    private static final int kFirst = 1;
+    private static final int kSecond = 2;
+
+    // Game state constants
+    private static final int kPlaying = 0;
+    private static final int kWin = 1;
+    private static final int kDraw = 2;
 
     // Keep track of the last window size to determine if it has changed
 
@@ -42,17 +50,32 @@ public class GameView extends JComponent {
     // The font used to display text
     private Font mainFont;
 
-    // The Connect4 instance for game data
-    private Connect4 connect4;
-
     // The window to display this view on
     private JFrame frame;
+
+    private int[][] board;
+    private int rows;
+    private int columns;
+    private int n;
+    private int player;
+    private int state;
+
+    private String firstPlayer;
+    private int firstScore;
+
+    private String secondPlayer;
+    private int secondScore;
+
+    private int draws;
 
     public GameView() {
         // Initialize font
         mainFont = new Font("Arial", Font.PLAIN, 11);
+
         // Initialize game
-        connect4 = new Connect4("RED", "YELLOW");
+        firstPlayer = "RED";
+        secondPlayer = "YELLOW";
+        init(6, 7, 4);
 
         // Initialize mouse handlers
         setEventHandlers();
@@ -91,6 +114,262 @@ public class GameView extends JComponent {
         new GameView();
     }
 
+    // Reads an integer from a BufferedReader
+    private static int readInt(BufferedReader br) throws IOException {
+        return Integer.parseInt(br.readLine());
+    }
+
+    public String getPlayerName() {
+        if (player == kFirst) {
+            return firstPlayer;
+        } else if (player == kSecond) {
+            return secondPlayer;
+        }
+        throw new IllegalStateException();
+    }
+
+    private void setWin() {
+        if (player == kFirst) {
+            firstScore++;
+        } else if (player == kSecond) {
+            secondScore++;
+        }
+        state = kWin;
+    }
+
+    private void setPlaying() {
+        state = kPlaying;
+    }
+
+    private void setDraw() {
+        draws++;
+        state = kDraw;
+    }
+
+    public void init(int rows, int columns, int n) {
+        this.rows = rows;
+        this.columns = columns;
+        this.n = n;
+        board = new int[rows][];
+        restartBoard();
+    }
+
+    public void restartBoard() {
+        for (int i = 0; i < rows; i++) {
+            board[i] = new int[columns];
+            for (int j = 0; j < columns; j++) {
+                board[i][j] = 0;
+            }
+        }
+        player = kFirst;
+        setPlaying();
+    }
+
+    boolean isValidMove(int column) {
+        return board[rows - 1][column] == kEmpty;
+    }
+
+    private void checkBoardFilled() {
+        if (state != kPlaying) return;
+        for (int i = 0; i < columns; i++) {
+            if (isValidMove(i)) {
+                return;
+            }
+        }
+        setDraw();
+    }
+
+    private boolean checkHorizontal(int row, int column, int[][] board, int player) {
+        int count = 1;
+        int c = column;
+        while (c > 0 && c < columns && board[row][c - 1] == player) c--;
+        count += column - c;
+        c = column;
+        while (c >= 0 && c < columns - 1 && board[row][c + 1] == player) c++;
+        count += c - column;
+        return count >= n;
+    }
+
+    private boolean checkVertical(int row, int column, int[][] board, int player) {
+        int count = 1;
+        int r = row;
+        while (r > 0 && r < rows && board[r - 1][column] == player) r--;
+        count += row - r;
+        r = row;
+        while (r >= 0 && r < rows - 1 && board[r + 1][column] == player) r++;
+        count += r - row;
+        return count >= n;
+    }
+
+    private boolean checkDiagonal(int row, int column, int[][] board, int player) {
+        int count = 1;
+        int r = row;
+        int c = column;
+        while (r > 0 && r < rows && c > 0 && c < columns && board[r - 1][c - 1] == player) {
+            r--;
+            c--;
+            count++;
+        }
+        r = row;
+        c = column;
+        while (r >= 0 && r < rows - 1 && c >= 0 && c < columns - 1 && board[r + 1][c + 1] == player) {
+            r++;
+            c++;
+            count++;
+        }
+        return count >= n;
+    }
+
+    private boolean checkInverseDiagonal(int row, int column, int[][] board, int player) {
+        int count = 1;
+        int r = row;
+        int c = column;
+        while (r >= 0 && r < rows - 1 && c > 0 && c < columns && board[r + 1][c - 1] == player) {
+            r++;
+            c--;
+            count++;
+        }
+        r = row;
+        c = column;
+        while (r > 0 && r < rows && c >= 0 && c < columns - 1 && board[r - 1][c + 1] == player) {
+            r--;
+            c++;
+            count++;
+        }
+        return count >= n;
+    }
+
+    void move(int column) {
+        int row = rows - 1;
+        while (row > 0 && board[row - 1][column] == kEmpty) row--;
+        board[row][column] = player;
+
+        if (checkHorizontal(row, column, board, player) ||
+                checkVertical(row, column, board, player) ||
+                checkDiagonal(row, column, board, player) ||
+                checkInverseDiagonal(row, column, board, player)) {
+            setWin();
+        }
+
+        checkBoardFilled();
+
+        if (state == kPlaying) {
+            switch (player) {
+                case kFirst:
+                    player = kSecond;
+                    break;
+                case kSecond:
+                    player = kFirst;
+            }
+        }
+    }
+
+    public String toString() {
+        StringBuffer buffer = new StringBuffer("Current Board: \n");
+        for (int i = 1; i <= columns; i++) {
+            buffer.append(i);
+            buffer.append(' ');
+        }
+        buffer.append('\n');
+        for (int i = board.length - 1; i >= 0; i--) {
+            for (int j = 0; j < board[i].length; j++) {
+                int it = board[i][j];
+                if (it == kEmpty) buffer.append('.');
+                else if (it == kFirst) buffer.append('r');
+                else buffer.append('b');
+                buffer.append(' ');
+            }
+            buffer.append("\n");
+        }
+        String player = getPlayerName();
+        buffer.append("Game State: ");
+
+        if (state == kPlaying) buffer.append(player).append("'s turn");
+        else if (state == kWin) buffer.append(player).append(" won the game");
+        else buffer.append("The game is a draw");
+        buffer.append('\n')
+                .append("Score: ")
+                .append(firstPlayer)
+                .append('-')
+                .append(firstScore)
+                .append('|')
+                .append(secondPlayer)
+                .append('-')
+                .append(secondScore)
+                .append("|Draw-")
+                .append(draws)
+                .append('\n');
+        return buffer.toString();
+    }
+
+    private String serialize() {
+        StringBuffer buffer = new StringBuffer();
+        buffer
+                .append(firstPlayer).append('\n')
+                .append(firstScore).append('\n')
+                .append(secondPlayer).append('\n')
+                .append(secondScore).append('\n')
+                .append(draws).append('\n')
+                .append(rows).append('\n')
+                .append(columns).append('\n')
+                .append(n).append('\n')
+                .append(player).append('\n')
+                .append(state).append('\n');
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                buffer.append(board[i][j]);
+                buffer.append(',');
+            }
+            buffer.append("\n");
+        }
+        return buffer.toString();
+    }
+
+    private void save(File file) throws IOException {
+        String s = serialize();
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+        writer.print(s);
+        writer.close();
+    }
+
+    private void load(File file) {
+        try {
+            deserializeFile(file);
+        } catch (IOException e) {
+            this.firstPlayer = "RED";
+            this.secondPlayer = "BLUE";
+            init(6, 7, 4);
+        }
+    }
+
+    private void deserializeFile(File file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        firstPlayer = br.readLine();
+        firstScore = readInt(br);
+        secondPlayer = br.readLine();
+        secondScore = readInt(br);
+        draws = readInt(br);
+        rows = readInt(br);
+        columns = readInt(br);
+        board = new int[rows][];
+        n = readInt(br);
+        player = readInt(br);
+        state = readInt(br);
+        int row = 0;
+        String line;
+        while ((line = br.readLine()) != null && row < rows) {
+            String[] data = line.split(",");
+            if (data.length != columns) throw new IllegalArgumentException("Data has wrong size");
+            board[row] = new int[columns];
+            for (int column = 0; column < columns; column++) {
+                board[row][column] = Integer.parseInt(data[column]);
+            }
+            row++;
+        }
+        if (row != rows) throw new IllegalArgumentException("Data has wrong size");
+        br.close();
+    }
+
     // Add mouse handlers to the Component
     private void setEventHandlers() {
         MouseMotionListener mouseMotionListener = new MouseMotionListener() {
@@ -102,13 +381,12 @@ public class GameView extends JComponent {
                 int newCol = -1;
 
                 // Check if the current state allows for hovering
-                if (scale != 0.0 && connect4.getState() == Connect4.kPlaying) {
+                if (scale != 0.0 && state == kPlaying) {
                     int mouseX = e.getX();
-                    int cols = connect4.getColumns();
 
                     // Calculate the min and max of the mouse range using columns
                     double min = x + 2 * scale;
-                    double max = min + cols * 12 * scale;
+                    double max = min + columns * 12 * scale;
 
                     // Check if mouse in range
                     if (mouseX >= min && mouseX <= max) {
@@ -129,13 +407,13 @@ public class GameView extends JComponent {
         MouseListener mouseListener = new MouseListener() {
             public void mouseClicked(MouseEvent e) {
                 // Check if the current state allows for clicking
-                if (hoverColumn == -1 || connect4.getState() != Connect4.kPlaying) {
+                if (hoverColumn == -1 || state != kPlaying) {
                     return;
                 }
 
                 // Check that the move is valid before making the move
-                if (connect4.isValidMove(hoverColumn)) {
-                    connect4.move(hoverColumn);
+                if (isValidMove(hoverColumn)) {
+                    move(hoverColumn);
                     repaint();
                 }
             }
@@ -168,10 +446,10 @@ public class GameView extends JComponent {
         setPlayer1_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Ask for the name of the first player
-                String s = JOptionPane.showInputDialog("Set Red Player", connect4.getFirstPlayer());
+                String s = JOptionPane.showInputDialog("Set Red Player", firstPlayer);
                 // Set the first player if it's valid
-                if (s.length() > 0 && !s.equals(connect4.getFirstPlayer())) {
-                    connect4.setFirstPlayer(s);
+                if (s.length() > 0 && !s.equals(firstPlayer)) {
+                    firstPlayer = s;
                     invalidateState();
                     repaint();
                 }
@@ -183,10 +461,10 @@ public class GameView extends JComponent {
         setPlayer2_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Ask for the name of the second player
-                String s = JOptionPane.showInputDialog("Set Yellow Player", connect4.getSecondPlayer());
+                String s = JOptionPane.showInputDialog("Set Yellow Player", secondPlayer);
                 // Set the second player if it's valid
-                if (s.length() > 0 && !s.equals(connect4.getSecondPlayer())) {
-                    connect4.setSecondPlayer(s);
+                if (s.length() > 0 && !s.equals(secondPlayer)) {
+                    secondPlayer = s;
                     invalidateState();
                     repaint();
                 }
@@ -209,7 +487,7 @@ public class GameView extends JComponent {
                 if (filename != null && dir != null) {
                     // Try saving to the file
                     try {
-                        connect4.save(new File(dir, filename));
+                        save(new File(dir, filename));
                     } catch (IOException ignored) {
                     }
                 }
@@ -231,7 +509,7 @@ public class GameView extends JComponent {
                 // Check that file is seleted
                 if (filename != null && dir != null) {
                     // Try loading it into the file
-                    connect4.load(new File(dir, filename));
+                    load(new File(dir, filename));
                     invalidateState();
                     repaint();
                 }
@@ -244,7 +522,7 @@ public class GameView extends JComponent {
         restart_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Restarts the board
-                connect4.restartBoard();
+                restartBoard();
                 repaint();
             }
         });
@@ -255,7 +533,7 @@ public class GameView extends JComponent {
         addRow_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Add 1 to rows and restart
-                connect4.init(connect4.getRows() + 1, connect4.getColumns(), connect4.getN());
+                init(rows + 1, columns, n);
                 invalidateState();
                 repaint();
             }
@@ -267,7 +545,7 @@ public class GameView extends JComponent {
         addCol_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Add 1 to columns and restart
-                connect4.init(connect4.getRows(), connect4.getColumns() + 1, connect4.getN());
+                init(rows, columns + 1, n);
                 invalidateState();
                 repaint();
             }
@@ -279,7 +557,7 @@ public class GameView extends JComponent {
         addN_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Add 1 to N and restart
-                connect4.init(connect4.getRows(), connect4.getColumns(), connect4.getN() + 1);
+                init(rows, columns, n + 1);
                 invalidateState();
                 repaint();
             }
@@ -292,7 +570,7 @@ public class GameView extends JComponent {
         resetAll_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Reset to original and restart
-                connect4.init(6, 7, 4);
+                init(6, 7, 4);
                 invalidateState();
                 repaint();
             }
@@ -311,9 +589,9 @@ public class GameView extends JComponent {
         hoverColumn = -1;
 
         // Reset the title of the window
-        frame.setTitle("Connect " + connect4.getN() + " | " +
-                connect4.getRows() + " by " + connect4.getColumns() + " | " +
-                connect4.getFirstPlayer() + " vs. " + connect4.getSecondPlayer());
+        frame.setTitle("Connect " + n + " | " +
+                rows + " by " + columns + " | " +
+                firstPlayer + " vs. " + secondPlayer);
     }
 
     // Paints the screen
@@ -337,15 +615,12 @@ public class GameView extends JComponent {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, viewWidth, viewHeight);
 
-        int cols = connect4.getColumns();
-        int rows = connect4.getRows();
-
         // Check if the window has resized; if so, recompute coordinates
         if (viewWidth != lastWidth || viewHeight != lastHeight) {
 
             // Find the min and max of viewport dimensions
 
-            double minWidth = cols * 12 + 4.0;
+            double minWidth = columns * 12 + 4.0;
             double maxWidth = 8 * minWidth;
 
             double minHeight = (rows + 1) * 12 + 4.0;
@@ -394,9 +669,8 @@ public class GameView extends JComponent {
         // Create the message
 
         String message;
-        int state = connect4.getState();
-        if (state == Connect4.kPlaying) message = connect4.getPlayerName() + "'s turn";
-        else if (state == Connect4.kWin) message = connect4.getPlayerName() + " won the game!!!";
+        if (state == kPlaying) message = getPlayerName() + "'s turn";
+        else if (state == kWin) message = getPlayerName() + " won the game!!!";
         else message = "The game is a tie";
 
         // Use measured bounds to center the message
@@ -412,7 +686,7 @@ public class GameView extends JComponent {
 
         RoundRectangle2D bg2 = new RoundRectangle2D.Double();
         bg2.setRoundRect(x + scale, y + scale * (12 + 1),
-                scale * (cols * 12 + 2), scale * (rows * 12 + 2),
+                scale * (columns * 12 + 2), scale * (rows * 12 + 2),
                 scale * 4, scale * 4);
 
         g.setColor(darkCyan);
@@ -420,9 +694,7 @@ public class GameView extends JComponent {
 
         // Draw all the checker pieces
 
-        int[][] board = connect4.getBoard();
-
-        for (int i = 0; i < cols; i++) {
+        for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 Ellipse2D ellipse = new Ellipse2D.Double();
 
@@ -433,7 +705,7 @@ public class GameView extends JComponent {
                 int piece = board[rows - 1 - j][i];
 
                 // Resolve the color of the piece
-                g.setColor(piece == Connect4.kEmpty ? Color.WHITE : (piece == Connect4.kFirst ? darkRed : darkYellow));
+                g.setColor(piece == kEmpty ? Color.WHITE : (piece == kFirst ? darkRed : darkYellow));
                 g2.fill(ellipse);
             }
         }
@@ -447,11 +719,9 @@ public class GameView extends JComponent {
                     row--;
                 }
 
-                int player = connect4.getPlayer();
-
                 // Resolve the color of the piece
-                g.setColor(player == Connect4.kFirst ? darkRed :
-                        (player == Connect4.kSecond ? darkYellow : Color.BLUE));
+                g.setColor(player == kFirst ? darkRed :
+                        (player == kSecond ? darkYellow : Color.BLUE));
 
                 Ellipse2D hovierIndicator = new Ellipse2D.Double();
 
@@ -462,6 +732,5 @@ public class GameView extends JComponent {
                 g2.fill(hovierIndicator);
             }
         }
-
     }
 }
