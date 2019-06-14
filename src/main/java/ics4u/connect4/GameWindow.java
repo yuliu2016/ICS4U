@@ -2,10 +2,7 @@ package ics4u.connect4;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 public class GameWindow extends JFrame {
     public static void main(String[] args) {
@@ -20,7 +17,7 @@ public class GameWindow extends JFrame {
         state = new Connect4("Player 1", "Player 2");
         view = new GameView(state);
 
-        setSize(512, 512);
+        setSize(768, 768);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent) {
@@ -44,8 +41,43 @@ public class GameWindow extends JFrame {
 
         BorderLayout layout = new BorderLayout();
 
-        setLayout(layout);
-        add(view, BorderLayout.CENTER);
+        Container container = getContentPane();
+
+        container.setLayout(layout);
+        container.add(view, BorderLayout.CENTER);
+
+        // region Menu Bar
+        MenuBar mb = new MenuBar();
+
+        Menu file = new Menu("File");
+        MenuItem save = new MenuItem("Save");
+//        save.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                saveGame();
+//            }
+//        });
+        file.add(save);
+        MenuItem load = new MenuItem("Load");
+//        load.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                loadGame();
+//            }
+//        });
+        file.add(load);
+        mb.add(file);
+
+        Menu game_ = new Menu("Game");
+        MenuItem restart = new MenuItem("Restart");
+//        restart.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                game.getBoard().reset();
+//                game.repaint();
+//            }
+//        });
+        game_.add(restart);
+        mb.add(game_);
+
+        setMenuBar(mb);
 //
 //        Panel panel = new Panel();
 //        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
