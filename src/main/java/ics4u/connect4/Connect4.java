@@ -4,13 +4,13 @@ import java.io.*;
 
 public class Connect4 {
 
-    private static final int kEmpty = 0;
-    private static final int kFirst = 1;
-    private static final int kSecond = 2;
+    static final int kEmpty = 0;
+    static final int kFirst = 1;
+    static final int kSecond = 2;
 
-    private static final int kPlaying = 0;
-    private static final int kWin = 1;
-    private static final int kDraw = 2;
+    static final int kPlaying = 0;
+    static final int kWin = 1;
+    static final int kDraw = 2;
 
     private int[][] board;
     private int rows;
@@ -62,13 +62,25 @@ public class Connect4 {
         return columns;
     }
 
-    public String getPlayer() {
+    public int getN() {
+        return n;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public String getPlayerName() {
         if (player == kFirst) {
             return firstPlayer;
         } else if (player == kSecond) {
             return secondPlayer;
         }
         throw new IllegalStateException();
+    }
+
+    public int getPlayer() {
+        return player;
     }
 
     private void setWin() {
@@ -112,7 +124,7 @@ public class Connect4 {
         return board[rows - 1][column] == kEmpty;
     }
 
-    void checkBoardFilled() {
+    private void checkBoardFilled() {
         if (state != kPlaying) return;
         for (int i = 0; i < columns; i++) {
             if (isValidMove(i)) {
@@ -228,7 +240,7 @@ public class Connect4 {
             }
             buffer.append("\n");
         }
-        String player = getPlayer();
+        String player = getPlayerName();
         buffer.append("Game State: ");
 
         if (state == kPlaying) buffer.append(player).append("'s turn");
