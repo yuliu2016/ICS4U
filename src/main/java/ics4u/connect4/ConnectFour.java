@@ -9,7 +9,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.io.*;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 /**
  * The Connect 4 (Or, Connect N) Game, with a graphical user interface
@@ -106,6 +105,17 @@ public class ConnectFour extends JComponent {
 
     // Numbers of draws
     private int draws;
+
+    // ==========GAME AI FIELDS==========
+
+    // The number of steps to lookahead
+    int lookahead = 0;
+
+    // The state of the board stack
+    int[] stack;
+
+    // The formatter to print out results
+    DecimalFormat format = new DecimalFormat("###00.00");
 
     // ==========CONSTRUCTOR==========
 
@@ -404,41 +414,50 @@ public class ConnectFour extends JComponent {
         }
     }
 
-    int m = 0;
-    int[] colOrder;
-    int[] stack;
-    DecimalFormat format = new DecimalFormat("###00.00");
-
     // ==========GAME COMPUTER AI METHODS==========
 
+    // Generate a computer move; then play it
     private void computerMove() {
-        colOrder = new int[columns];
-        for (int i = 0; i < columns; i++)
-            colOrder[i] = columns / 2 + (1 - 2 * (i % 2)) * (i + 1) / 2;
 
+        lookahead = rows * columns;
+        int k = lookahead;
+
+        // Create the stack
         stack = new int[columns];
-        m = rows * columns;
-        int k = m;
         for (int i = 0; i < columns; i++) {
             int j = rows;
             while (j > 0 && board[j - 1][i] == kEmpty) {
                 j--;
             }
+            // Find # of steps already taken
             k = k - (rows - j);
             stack[i] = j;
         }
-        m = Math.min(m, k + 8);
 
+        // Calculate the lookahead steps
+        lookahead = Math.min(lookahead, k + 8);
+
+        // Find the max score between [-1, 1]
         double maxScore = Double.NEGATIVE_INFINITY;
+
+        // Keep track of the best column
         int best = -1;
         for (int i = 0; i < columns; i++) {
+            // Make sure there is space available
             if (stack[i] < rows) {
+                // Push the stack
                 board[stack[i]][i] = this.player;
                 stack[i]++;
+
+                // Calculate next score and print it out
                 double score = calculateScore(i, k + 1, this.player);
                 System.out.println("Column " + i + " - " + format.format(score * 100) + "%");
+
+                // Pop the stack
                 stack[i]--;
                 board[stack[i]][i] = kEmpty;
+
+                // Compare with max score
                 if (score > maxScore) {
                     maxScore = score;
                     best = i;
@@ -446,44 +465,62 @@ public class ConnectFour extends JComponent {
             }
         }
 
-        if (stack[best] < rows) {
+        // Move if there is a best column
+        if (best != -1) {
             move(best);
         }
 
         System.out.println();
     }
 
+    // Calculate a score in the range of [-1, 1] for a specified position
     private double calculateScore(int col, int k, int player) {
-        if (k > m) {
+
+        // Recursion end condition
+        if (k > lookahead) {
             return 0.0;
         }
 
+        // Get the previous move
         int row = stack[col] - 1;
+
+        // Check win state
         if (checkHorizontal(row, col, board, player) ||
                 checkVertical(row, col, board, player) ||
                 checkDiagonal(row, col, board, player) ||
                 checkInverseDiagonal(row, col, board, player)) {
+            // If winning, return the highest score
             return 1.0;
         }
 
+        // Otherwise return an average of scores in the next move
         double sum = 0;
         int count = 1;
+
         for (int i = 0; i < columns; i++) {
             int si = stack[i];
             if (si < rows) {
+                // Push the stack
                 board[si][i] = player;
                 stack[i]++;
                 double score = -calculateScore(i, k + 1, invertPlayer(player));
+
+                // Pop the stack
                 stack[i]--;
                 board[si][i] = kEmpty;
+
+                // Quick return if winning the next move
                 if (score <= -1) {
                     return -1;
                 }
+
+                // Add to rolling count
                 sum += score;
                 count++;
             }
         }
 
+        // Return the average
         return sum / count;
     }
 
