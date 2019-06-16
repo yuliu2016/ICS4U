@@ -8,9 +8,11 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
- * The Connect 4 (N) Game, with a graphical user interface
+ * The Connect 4 (Or, Connect N) Game, with a graphical user interface
  *
  * @author Yu Liu
  */
@@ -22,8 +24,8 @@ public class ConnectFour extends JComponent {
     public static final int kDefaultRows = 6;
     public static final int kDefaultColumns = 7;
     public static final int kDefaultN = 4;
-    public static final String kDefaultFirst = "RED";
-    public static final String kDefaultSecond = "YELLOW";
+    public static final String kDefaultFirst = "Red";
+    public static final String kDefaultSecond = "Yellow";
     public static final Font kDefaultFont = new Font("Arial", Font.PLAIN, 11);
 
     // Colour constants
@@ -107,7 +109,7 @@ public class ConnectFour extends JComponent {
 
     // ==========CONSTRUCTOR==========
 
-    public ConnectFour() {
+    private ConnectFour() {
 
         // Initialize game
         mainFont = kDefaultFont;
@@ -158,10 +160,10 @@ public class ConnectFour extends JComponent {
         return Integer.parseInt(br.readLine());
     }
 
-    // ==========GAME METHODS==========
+    // ==========GAME HELPER METHODS==========
 
     // Get the name of the current player
-    public String getPlayerName() {
+    private String getPlayerName() {
         if (player == kFirst) {
             return firstPlayer;
         } else if (player == kSecond) {
@@ -192,7 +194,7 @@ public class ConnectFour extends JComponent {
     }
 
     // Reset the score and the board with size params
-    public void resetAll(int rows, int columns, int n) {
+    private void resetAll(int rows, int columns, int n) {
         this.rows = rows;
         this.columns = columns;
         this.n = n;
@@ -204,7 +206,7 @@ public class ConnectFour extends JComponent {
     }
 
     // Restart the game without resetting everything
-    public void restartBoard() {
+    private void restartBoard() {
         for (int i = 0; i < rows; i++) {
             board[i] = new int[columns];
             for (int j = 0; j < columns; j++) {
@@ -215,9 +217,11 @@ public class ConnectFour extends JComponent {
         setPlaying();
     }
 
+    // ==========GAME LOGIC METHODS==========
+
     // Check if a board move is valid (i.e. the top row of the column is empty)
     // Column index is constrained elsewhere
-    boolean isValidMove(int column) {
+    private boolean isValidMove(int[][] board, int column) {
         return board[rows - 1][column] == kEmpty;
     }
 
@@ -225,7 +229,7 @@ public class ConnectFour extends JComponent {
     // It is filled when there are no valid moves available for every column
     private void checkBoardFilled() {
         for (int i = 0; i < columns; i++) {
-            if (isValidMove(i)) {
+            if (isValidMove(board, i)) {
                 return;
             }
         }
@@ -364,13 +368,20 @@ public class ConnectFour extends JComponent {
         return false;
     }
 
+    // Inverts the player number
+    private int invertPlayer(int player) {
+        if (player == kFirst) return kSecond;
+        if (player == kSecond) return kFirst;
+        throw new IllegalStateException();
+    }
+
     // Make a move at the specified column
     // This method assumes that the column is already a valid move
     // The player piece is moved to the bottom of the column, and is
     // then checked in all four directions for connections. If any
     // is true, change the state to win; Otherwise check for draw
     // If all checks fail, advance to the next player
-    void move(int column) {
+    private void move(int column) {
         int row = rows - 1;
         while (row > 0 && board[row - 1][column] == kEmpty) {
             row--;
@@ -389,15 +400,94 @@ public class ConnectFour extends JComponent {
 
         // Advance to the next player
         if (state == kPlaying) {
-            switch (player) {
-                case kFirst:
-                    player = kSecond;
-                    break;
-                case kSecond:
-                    player = kFirst;
-            }
+            player = invertPlayer(player);
         }
     }
+
+    int m = 0;
+    int[] colOrder;
+    int[] stack;
+    DecimalFormat format = new DecimalFormat("###00.00");
+
+    // ==========GAME COMPUTER AI METHODS==========
+
+    private void computerMove() {
+        colOrder = new int[columns];
+        for (int i = 0; i < columns; i++)
+            colOrder[i] = columns / 2 + (1 - 2 * (i % 2)) * (i + 1) / 2;
+
+        stack = new int[columns];
+        m = rows * columns;
+        int k = m;
+        for (int i = 0; i < columns; i++) {
+            int j = rows;
+            while (j > 0 && board[j - 1][i] == kEmpty) {
+                j--;
+            }
+            k = k - (rows - j);
+            stack[i] = j;
+        }
+        m = Math.min(m, k + 8);
+
+        double maxScore = Double.NEGATIVE_INFINITY;
+        int best = -1;
+        for (int i = 0; i < columns; i++) {
+            if (stack[i] < rows) {
+                board[stack[i]][i] = this.player;
+                stack[i]++;
+                double score = calculateScore(i, k + 1, this.player);
+                System.out.println("Column " + i + " - " + format.format(score * 100) + "%");
+                stack[i]--;
+                board[stack[i]][i] = kEmpty;
+                if (score > maxScore) {
+                    maxScore = score;
+                    best = i;
+                }
+            }
+        }
+
+        if (stack[best] < rows) {
+            move(best);
+        }
+
+        System.out.println();
+    }
+
+    private double calculateScore(int col, int k, int player) {
+        if (k > m) {
+            return 0.0;
+        }
+
+        int row = stack[col] - 1;
+        if (checkHorizontal(row, col, board, player) ||
+                checkVertical(row, col, board, player) ||
+                checkDiagonal(row, col, board, player) ||
+                checkInverseDiagonal(row, col, board, player)) {
+            return 1.0;
+        }
+
+        double sum = 0;
+        int count = 1;
+        for (int i = 0; i < columns; i++) {
+            int si = stack[i];
+            if (si < rows) {
+                board[si][i] = player;
+                stack[i]++;
+                double score = -calculateScore(i, k + 1, invertPlayer(player));
+                stack[i]--;
+                board[si][i] = kEmpty;
+                if (score <= -1) {
+                    return -1;
+                }
+                sum += score;
+                count++;
+            }
+        }
+
+        return sum / count;
+    }
+
+    // ==========GAME IO METHODS==========
 
     // Convert data to a printable string
     public String toString() {
@@ -583,7 +673,7 @@ public class ConnectFour extends JComponent {
                 }
 
                 // Check that the move is valid before making the move
-                if (isValidMove(hoverColumn)) {
+                if (isValidMove(board, hoverColumn)) {
                     move(hoverColumn);
                     repaint();
                 }
@@ -614,7 +704,7 @@ public class ConnectFour extends JComponent {
         JMenu menu = new JMenu("Menu");
 
         JMenuItem setPlayer1_ = new JMenuItem("Set Red Player");
-
+        setPlayer1_.setAccelerator(KeyStroke.getKeyStroke('1'));
         setPlayer1_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Ask for the name of the first player
@@ -630,7 +720,7 @@ public class ConnectFour extends JComponent {
         menu.add(setPlayer1_);
 
         JMenuItem setPlayer2_ = new JMenuItem("Set Yellow Player");
-
+        setPlayer2_.setAccelerator(KeyStroke.getKeyStroke('2'));
         setPlayer2_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Ask for the name of the second player
@@ -646,7 +736,7 @@ public class ConnectFour extends JComponent {
         menu.add(setPlayer2_);
 
         JMenuItem save_ = new JMenuItem("Save");
-        save_.setAccelerator(KeyStroke.getKeyStroke('S', shortcut));
+        save_.setAccelerator(KeyStroke.getKeyStroke('s'));
 
         save_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -672,7 +762,7 @@ public class ConnectFour extends JComponent {
         menu.add(save_);
 
         JMenuItem load_ = new JMenuItem("Load");
-        load_.setAccelerator(KeyStroke.getKeyStroke('O', shortcut));
+        load_.setAccelerator(KeyStroke.getKeyStroke('o'));
 
         load_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -695,7 +785,7 @@ public class ConnectFour extends JComponent {
         menu.add(load_);
 
         JMenuItem restart_ = new JMenuItem("Restart");
-        restart_.setAccelerator(KeyStroke.getKeyStroke('R', shortcut));
+        restart_.setAccelerator(KeyStroke.getKeyStroke('r'));
 
         restart_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -758,8 +848,8 @@ public class ConnectFour extends JComponent {
         });
         menu.add(resetAll_);
 
-        JMenuItem print_ = new JMenuItem("Print");
-        print_.setAccelerator(KeyStroke.getKeyStroke('P', shortcut));
+        JMenuItem print_ = new JMenuItem("Print to Standard Output");
+        print_.setAccelerator(KeyStroke.getKeyStroke('p'));
 
         print_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -769,12 +859,65 @@ public class ConnectFour extends JComponent {
         });
         menu.add(print_);
 
+        JMenuItem badComputer_ = new JMenuItem("Bad Computer Move");
+        badComputer_.setAccelerator(KeyStroke.getKeyStroke('b'));
+
+        badComputer_.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Check the current state of the game
+                if (state != kPlaying) return;
+
+                // Finds an array of available moves
+                int[] available = new int[columns];
+                int i = 0;
+                for (int j = 0; j < columns; j++) {
+                    if (isValidMove(board, j)) {
+                        available[i] = j;
+                        i++;
+                    }
+                }
+
+                // Randomly select a new move
+                int newMove = (int) (Math.random() * i);
+
+                // Move there
+                move(available[newMove]);
+                repaint();
+            }
+        });
+        menu.add(badComputer_);
+
+        JMenuItem goodComputer_ = new JMenuItem("Good Computer Move");
+        goodComputer_.setAccelerator(KeyStroke.getKeyStroke('g'));
+
+        goodComputer_.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Check the current state of the game
+                if (state != kPlaying) return;
+
+                try {
+                    // Runs the computation on a new thread
+                    // Mouse hover will sync graphics to show permutations
+                    new Thread(new Runnable() {
+                        public void run() {
+                            computerMove();
+                            repaint();
+                        }
+                    }).start();
+                } catch (Exception ex) {
+                    System.err.println(ConnectFour.this);
+                    ex.printStackTrace();
+                }
+            }
+        });
+        menu.add(goodComputer_);
+
         menuBar.add(menu);
         return menuBar;
     }
 
     // Invalidates computed state of the view
-    public void invalidateState() {
+    private void invalidateState() {
         // Reset the width and height so it will be picked up on paint
         lastWidth = 0;
         lastHeight = 0;
@@ -841,7 +984,7 @@ public class ConnectFour extends JComponent {
             y = (viewHeight - height) / 2.0;
 
             // Derive the font size according to the scale
-            mainFont = mainFont.deriveFont((float) (int) (scale * 5));
+            mainFont = mainFont.deriveFont((float) (int) (scale * 3.5));
 
             lastWidth = viewWidth;
             lastHeight = viewHeight;
@@ -858,7 +1001,9 @@ public class ConnectFour extends JComponent {
         String message;
         if (state == kPlaying) message = getPlayerName() + "'s turn";
         else if (state == kWin) message = getPlayerName() + " won the game!!!";
-        else message = "The game is a tie";
+        else message = "The game is a draw";
+
+        message += " | " + firstPlayer + ":" + secondPlayer + ":Draws = " + firstScore + ":" + secondScore + ":" + draws;
 
         // Use measured bounds to center the message
         Rectangle2D bounds = mainFont.getStringBounds(message, g2.getFontRenderContext());
@@ -921,7 +1066,7 @@ public class ConnectFour extends JComponent {
 
         // Draw a line showing the connected pieces if winning
         if (state == kWin) {
-            g2.setStroke(new BasicStroke((float) scale / 2));
+            g2.setStroke(new BasicStroke((float) scale));
             g.setColor(Color.PINK);
             g2.draw(new Line2D.Double(x + scale * (12 * connectedMinCol + 3 + 5),
                     y + scale * (12 * (rows - 1 - connectedMinRow) + 12 + 3 + 5),
