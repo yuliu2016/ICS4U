@@ -451,7 +451,6 @@ public class ConnectFour extends JComponent {
 
                 // Calculate next score and print it out
                 double score = calculateScore(i, k + 1, this.player);
-                System.out.println("Column " + i + " - " + format.format(score * 100) + "%");
 
                 // Pop the stack
                 stack[i]--;
@@ -469,8 +468,6 @@ public class ConnectFour extends JComponent {
         if (best != -1) {
             move(best);
         }
-
-        System.out.println();
     }
 
     // Calculate a score in the range of [-1, 1] for a specified position
@@ -489,6 +486,7 @@ public class ConnectFour extends JComponent {
                 checkVertical(row, col, board, player) ||
                 checkDiagonal(row, col, board, player) ||
                 checkInverseDiagonal(row, col, board, player)) {
+
             // If winning, return the highest score
             return 1.0;
         }
@@ -503,6 +501,8 @@ public class ConnectFour extends JComponent {
                 // Push the stack
                 board[si][i] = player;
                 stack[i]++;
+
+                // Calculate next score
                 double score = -calculateScore(i, k + 1, invertPlayer(player));
 
                 // Pop the stack
